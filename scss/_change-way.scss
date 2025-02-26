@@ -1,0 +1,344 @@
+.change-way {
+    margin: 10rem 0 18.7rem;
+    position: relative;
+
+    &__svg {
+        position: absolute;
+        right: 0;
+        top: 0;
+        pointer-events: none;
+        z-index: -1;
+        animation: spin-fade 10s linear infinite;
+    }
+
+    .block-title {
+        margin-bottom: 4rem;
+    }
+
+    .subtitle {
+        font-size: 2.2rem;
+        margin-top: 1em;
+        font-weight: 500;
+    }
+}
+
+.change-way__content {
+    display: grid;
+    grid-template-columns: repeat(2, calc(50% - 1.15rem));
+    gap: 2.3rem;
+}
+.change-way__item {
+    border-radius: 48px;
+    padding: 4.5rem;
+    background: #292731;
+
+    &:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .text-block {
+        margin-top: 2.5rem;
+        .title {
+            font-size: 3rem;
+            line-height: 1.3;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 1.6rem;
+        }
+        .text {
+            font-size: 1.8rem;
+            line-height: 1.5;
+            color: #D2CEFE;
+            a {
+                text-decoration: underline;
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+
+    .vertical {
+        height: 28.7rem;
+        overflow: hidden;
+        position: relative;
+        &::after {
+            content: '';
+            width: 100%;
+            height: 9.5rem;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(to bottom, rgba(41, 39, 49, 0) 10%, rgba(41, 39, 49, 0.4) 20%, rgba(41, 39, 49, 0.7) 40%, #292731 100%);
+            pointer-events: none;
+        }
+    }
+
+    .horizontal {
+        overflow: hidden;
+        position: relative;
+        &::after {
+            content: '';
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(to right, rgba(41, 39, 49, 0) 0%, rgba(41, 39, 49, 0.2) 30%, #292731 95%);
+            pointer-events: none;
+        }
+    }
+
+    &__row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .text-block{
+            width: 45%;
+        }
+    }
+
+    .btns-container {
+        width: 50%;
+        text-align: right;
+        .btn {
+            width: 100%;
+            max-width: 37.7rem;
+            box-shadow: -37px -15px 60px 0 rgba(0, 0, 0, 0.5);
+        }
+    }
+    .btn-wrapper {
+        position: relative;
+        .cat-for-pay {
+            position: absolute;
+            bottom: calc(100% - 30px);
+            right: 0;
+            z-index: 1;
+        }
+    }
+}
+
+.bonus-list {
+    &__item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--main-color);
+        color: #fff;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        padding: 1.75rem 2.7rem;
+        font-size: 2rem;
+        .name {
+            line-height: 1.5;
+        }
+        .value {
+            width: 12rem;
+            height: 5rem;
+            background: #413960;
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1;
+        }
+        .bonus-value {
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            &::after {
+                content: '';
+                width: 1.3em;
+                height: 1.3em;
+                display: inline-block;
+                background: url('../img/orb_mini.png') no-repeat center / contain;
+            }
+        }
+    }
+}
+
+.games-list {
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    grid-auto-flow: column;
+    grid-auto-columns: min-content;
+    grid-gap: 2rem;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    /* Скрыть полосу прокрутки для Chrome/Safari/Opera */
+    &::-webkit-scrollbar {
+        height: 5px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+    }
+}
+
+.games-list__item {
+    width: 130px;
+    height: 130px;
+    border-radius: 20px;
+    overflow: hidden;
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.games-list__item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.save-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #34323B;
+    border-radius: 18px;
+    height: 7rem;
+    padding: 0 1.4rem;
+    width: 100%;
+    max-width: 35.2rem;
+    box-shadow: -37px -15px 60px 0 rgba(0, 0, 0, 0.5);
+    transform: translateX(-44%);
+
+    &__left {
+        display: flex;
+        align-items: center;
+        gap: 1.3rem;
+        text-align: left;
+
+        &__body {
+            color: var(--light-color);
+            font-weight: 400;
+            line-height: 1.2;
+            .caption {
+                color: #fff;
+                font-weight: 500;
+            }
+        }
+    }
+}
+
+.checkbox {
+    position: relative;
+    display: inline-block;
+}
+
+.checkbox input[type="checkbox"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.checkbox label {
+    display: block;
+    width: 50px;
+    height: 25px;
+    background-color: #7865d2;
+    border-radius: 25px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.checkbox label::after {
+    content: "";
+    position: absolute;
+    width: 21px;
+    height: 21px;
+    border-radius: 50%;
+    background-color: #c5c5c5;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+}
+
+.checkbox input[type="checkbox"]:checked + label {
+    background-color: var(--violet);
+}
+
+.checkbox input[type="checkbox"]:checked + label::after {
+    background: #fff;
+    transform: translateX(25px);
+}
+
+/* Опциональные стили для эффекта нажатия */
+.checkbox label:active::after {
+    width: 23px;
+}
+
+@keyframes spin-fade {
+    0% {
+        filter: blur(0);
+        opacity: 1;
+    }
+    50% {
+        filter: blur(100px);
+        opacity: 0.4;
+    }
+    100% {
+        filter: blur(0);
+        opacity: 1;
+    }
+}
+
+/* Анимация моргания левого глаза */
+@keyframes blink {
+    0%, 92%, 100% { 
+        transform: scaleY(1);
+        cy: 58;
+    }
+    94%, 96% { 
+        transform: scaleY(0);
+        cy: 58;
+    }
+}
+
+/* Анимация моргания правого глаза */
+@keyframes rightBlink {
+    0%, 92%, 100% { 
+        transform: scaleY(1);
+        cy: 60;
+    }
+    94%, 96% { 
+        transform: scaleY(0);
+        cy: 60;
+    }
+}
+
+/* Анимация движения хвоста */
+@keyframes tailWag {
+    0% { transform: rotate(0deg) translateY(0); }
+    50% { transform: rotate(-10deg) translateY(0); }
+    100% { transform: rotate(0deg) translateY(0); }
+}
+
+/* Стили для левого глаза */
+#leftEye {
+    animation: blink 8s infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+/* Стили для правого глаза */
+#rightEye {
+    animation: rightBlink 8s infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+/* Стили для кончика хвоста */
+#tail-tip {
+    animation: tailWag 3s infinite ease-in-out;
+    transform-origin: 116px 78px;
+}

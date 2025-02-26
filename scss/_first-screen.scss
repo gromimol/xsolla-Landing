@@ -1,0 +1,136 @@
+.first-screen__svg-1,
+.first-screen__svg-2 {
+    position: absolute;
+    top: 0;
+    right: 0;
+    filter: blur(90px);
+    z-index: -1;
+    opacity: 0;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+
+.first-screen__svg-1 {
+    animation: fadeInOut1 20s ease-in-out infinite;
+}
+
+.first-screen__svg-2 {
+    transform-origin: center center;
+    animation: fadeInOut2 20s ease-in-out infinite, rotate 20s linear infinite;
+}
+
+.first-screen {
+    padding-top: 12rem;
+    &__left {
+        width: 60%;
+        .h1 {
+            margin-bottom: 3.5rem;
+        }
+        &__text {
+            display: flex;
+            p {
+                font-size: 2.2rem;
+                line-height: 1.36;
+            }
+        }
+    }
+    &__right {
+        width: 38%;
+    }
+
+    .btn-container {
+        display: flex;
+        gap: 12px;
+        margin-top: 4rem;
+    }
+}
+.text-list {
+    font-size: 4rem;
+    font-weight: 500;
+    line-height: 1.35;
+    min-width: 22.5rem;
+    position: relative;
+    top: -0.7rem;
+    li:first-child {
+        color: rgba(255, 255, 255, 1);
+      }
+      
+      @for $i from 1 through 5 {
+        li:nth-child(#{$i + 1}) {
+          color: rgba(255, 255, 255, 1 - ($i * 0.2));
+        }
+      }
+}
+
+.call-to-scroll {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1em;
+    align-items: center;
+    color: #876BFA;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 6rem;
+}
+.scroll-icon {
+    width: 15px;
+    height: 23px;
+    border: 1px solid currentColor;
+    border-radius: 10px;
+    position: relative;
+    background: #322263;
+    &::before {
+        content: '';
+        width: 2px;
+        height: 6px;
+        border-radius: 19px;
+        background: currentColor;
+        position: absolute;
+        top: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: scroll 2s infinite;
+    }
+}
+
+@keyframes scroll {
+    0% {
+        top: 6px;
+    }
+    30% {
+        top: 2px;
+    }
+    40% {
+        top: 2px;
+    }
+    60% {
+        top: 6px;
+    }
+    100% {
+        top: 6px;
+    }
+}
+
+@keyframes fadeInOut1 {
+    0% { opacity: 0.5; }
+    15% { opacity: 1; }
+    40% { opacity: 1; }
+    65% { opacity: 1; }
+    85% { opacity: 0.3; }
+    100% { opacity: 0.5; }
+}
+
+@keyframes fadeInOut2 {
+    0% { opacity: 0.5; }
+    35% { opacity: 0.3; }
+    60% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

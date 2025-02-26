@@ -1,0 +1,56 @@
+.btn {
+    display: inline-flex;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    font-size: 1.6rem;
+    font-weight: 500;
+    letter-spacing: .5px;
+    line-height: 1;
+    padding: 1.188em 2.5em;
+    border-radius: 16px;
+    color: var(--main-color);
+    background-color: var(--accent-color);
+    transition: all .2s;
+    appearance: none;
+    cursor: pointer;
+
+    &:hover {
+        opacity: 0.8;
+    }
+
+    &--grey {
+        background-color: var(--grey-dark);
+        color: #fff;
+
+        &:hover {
+            opacity: 1;
+            background: var(--accent-color);
+            color: var(--main-color)
+        }
+    }
+
+    &--violet {
+        background: var(--violet);
+        color: #fff;
+    }
+}
+.ripple {
+    position: absolute;
+    background-color: #678c1e;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple-animation 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple-animation {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
