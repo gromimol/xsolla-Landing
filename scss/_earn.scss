@@ -1,0 +1,142 @@
+.earn {
+    .block-title {
+        margin-bottom: 10rem;
+        .accent {
+            display: block;
+        }
+    }
+
+    &__body {
+        border-radius: 64px 64px 0 0;
+        background: linear-gradient(90deg, #8E38D7 0%, #FF336D 100%);
+        padding-top: 7rem;
+    }
+
+    &__content {
+        &__left,
+        &__right {
+            width: 47%;
+        }
+
+        &__left {
+            background-color: #fff;
+            border-radius: 32px 32px 0 0;
+            padding: 2.8rem 2.8rem 1rem;
+            color: var(--main-color);
+            position: relative;
+
+            &::after {
+                content: '';
+                width: 100%;
+                height: 50%;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                background: linear-gradient(to top, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%);
+                pointer-events: none;
+            }
+        }
+
+        &__right {
+            padding-bottom: 4rem;
+            .text {
+                line-height: 1.38;
+                margin-bottom: 2rem;
+            }
+            .btn {
+                margin-top: 4rem;
+            }
+        }
+    }
+
+    .bonus-list {
+        &__item {
+            background: #DAD6E6;
+            color: var(--main-color);
+            font-size: 1.6rem;
+            font-weight: 400;
+            padding: 1.95rem 2.7rem;
+
+            &:last-child {
+                margin-bottom: 1rem;
+            }
+            .name {
+                width: 60%;
+            }
+            .value {
+                background: #363636;
+                color: #fff;
+                font-weight: 500;
+                .bonus-value {
+                    flex-direction: row-reverse;
+                }
+            }
+        }
+    }
+}
+.earn__card {
+    display: flex;
+    gap: 2.2rem;
+    margin-bottom: 2.3rem;
+    .img {
+        img {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+    }
+    .description {
+        .title {
+            font-size: 2rem;
+            font-weight: 500;
+            margin-bottom: 0.5em;
+            line-height: 1.4;
+        }
+        .text {
+            line-height: 1.5;
+            font-weight: 400;
+        }
+    }
+}
+.cat-scene {
+    position: absolute;
+    bottom: calc(100% - 34px);
+    right: 0;
+  }
+  
+  .cat-body {
+    position: relative;
+    top: 0;
+    left: 0;
+  }
+  
+  .cat-tail {
+    position: absolute;
+    top: 20px;
+    left: 180px;
+    transform-origin: 0 100%;
+    animation: tailWag 2s infinite ease-in-out;
+  }
+  
+  .eye {
+    animation: blink 6s infinite;
+  }
+  
+  @keyframes tailWag {
+    0%, 100% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(15deg);
+    }
+  }
+  
+  @keyframes blink {
+    0%, 96%, 100% {
+      opacity: 1;
+    }
+    98% {
+      opacity: 0.1;
+    }
+  }

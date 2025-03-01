@@ -1,0 +1,94 @@
+.game-slider-wrapper {}
+.game-slider {
+    margin-bottom: 6rem;
+    .slick-track {
+        display: flex;
+        gap: 30px;
+        padding: 30px 0;
+    }
+    .slide {
+        transition: all .3s;
+        &.slick-center {
+            transform: scale(1.2);
+            .game-logo {
+                img {
+                    filter:brightness(1);
+                }
+            }
+            .game-title {
+                background: var(--accent-color);
+                color: var(--main-color);
+            }
+        }
+
+        &__content {
+            border-radius: 10px;
+            background: linear-gradient(to bottom, #221C30 0%, #171320 100%);
+            height: 209px;
+            display: flex;
+            flex-direction: column;
+        }
+        .game-logo {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            img {
+                filter:brightness(0.5);
+                transition: all .3s;
+            }
+        }
+        .game-title {
+            height: 84px;
+            border-radius: 10px;
+            background: #2C2640;
+            font-size: 20px;
+            padding: 12px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.5);
+            transition: all .3s;
+        }
+    }
+}
+
+.slider-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 1rem;
+
+    .prev-arrow,
+    .next-arrow {
+        cursor: pointer;
+    }
+
+    .slick-dots {
+        position: relative;
+        bottom: 0;
+        top: -2px;
+        li {
+            width: auto;
+            height: auto;
+            margin: 0 2px;
+            &.slick-active {
+                button {
+                    width: 24px;
+                    background: #fff;
+                    border-radius: 4px;
+                }
+            }
+        }
+    }
+    .slick-dots li button {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #423E4A;
+        padding: 0;
+        transition: all .3s;
+        &::before {
+            display: none;
+        }
+    }
+}
