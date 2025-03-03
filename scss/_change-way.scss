@@ -1,5 +1,5 @@
 .change-way {
-    margin: 10rem 0 18.7rem;
+    margin: 11.1rem 0 18.4rem;
     position: relative;
 
     &__svg {
@@ -12,7 +12,7 @@
     }
 
     .block-title {
-        margin-bottom: 4rem;
+        margin-bottom: 4.9rem;
     }
 
     .subtitle {
@@ -89,7 +89,7 @@
             height: 100%;
             position: absolute;
             bottom: 0;
-            right: 0;
+            right: -1px;
             background: linear-gradient(to right, rgba(41, 39, 49, 0) 0%, rgba(41, 39, 49, 0.2) 30%, #292731 95%);
             pointer-events: none;
         }
@@ -119,6 +119,7 @@
             position: absolute;
             bottom: calc(100% - 30px);
             right: 0;
+            overflow: visible;
             z-index: 1;
         }
     }

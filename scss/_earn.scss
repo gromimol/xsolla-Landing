@@ -1,6 +1,6 @@
 .earn {
     .block-title {
-        margin-bottom: 10rem;
+        margin-bottom: 8.6rem;
         .accent {
             display: block;
         }
@@ -10,15 +10,13 @@
         border-radius: 64px 64px 0 0;
         background: linear-gradient(90deg, #8E38D7 0%, #FF336D 100%);
         padding-top: 7rem;
+        padding-bottom: 6.3rem;
     }
 
     &__content {
-        &__left,
-        &__right {
-            width: 47%;
-        }
 
         &__left {
+            width: 45.9%;
             background-color: #fff;
             border-radius: 32px 32px 0 0;
             padding: 2.8rem 2.8rem 1rem;
@@ -38,10 +36,11 @@
         }
 
         &__right {
+            width: 50%;
             padding-bottom: 4rem;
             .text {
                 line-height: 1.38;
-                margin-bottom: 2rem;
+                margin-bottom: .9rem;
             }
             .btn {
                 margin-top: 4rem;
@@ -64,9 +63,12 @@
                 width: 60%;
             }
             .value {
+                width: 10rem;
+                height: 4rem;
                 background: #363636;
                 color: #fff;
                 font-weight: 500;
+                border-radius: 9px;
                 .bonus-value {
                     flex-direction: row-reverse;
                 }
@@ -77,7 +79,7 @@
 .earn__card {
     display: flex;
     gap: 2.2rem;
-    margin-bottom: 2.3rem;
+    margin-bottom: 1.3rem;
     .img {
         img {
             width: 100px;
@@ -120,7 +122,7 @@
   }
   
   .eye {
-    animation: blink 6s infinite;
+    animation: blink2 6s infinite;
   }
   
   @keyframes tailWag {
@@ -132,7 +134,7 @@
     }
   }
   
-  @keyframes blink {
+  @keyframes blink2 {
     0%, 96%, 100% {
       opacity: 1;
     }

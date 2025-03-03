@@ -12,9 +12,7 @@
         <header class="header">
 
         </header>
-        <main class="main">
-            
-        
+        <main class="main"> 
             <div class="first-screen">
                 <div class="container flex">
                     <div class="first-screen__left">
@@ -41,12 +39,29 @@
                             <source srcset="img/webp/main-box.webp" type="image/webp">
                             <img src="img/main_box.png" alt="">
                         </picture>
+                        <svg class="shadow" width="496" height="136" viewBox="0 0 496 136" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g filter="url(#filter0_f_3160_5901)">
+                            <path d="M40.463 58.305C36.1716 50.7234 87.8481 47.658 114.223 47.073L362.324 39C381.546 41.691 424.818 46.6518 444.13 44.967C468.27 42.861 454.188 58.305 444.13 68.4839C434.072 78.6629 351.595 91.6499 314.715 96.2129C277.835 100.776 88.742 87.4379 57.2265 84.2789C25.711 81.1199 45.8274 67.7819 40.463 58.305Z" fill="black" fill-opacity="0.8"/>
+                            </g>
+                            <defs>
+                            <filter id="filter0_f_3160_5901" x="0.477715" y="0.477715" width="495.503" height="135.199" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+                            <feGaussianBlur stdDeviation="19.2611" result="effect1_foregroundBlur_3160_5901"/>
+                            </filter>
+                            </defs>
+                        </svg>                            
                     </div>
                 </div> 
                 <div class="call-to-scroll">
                     <div class="scroll-icon"></div>
                     <div class="text">Scroll to learn more</div>
-                </div>                
+                </div>
+                <div data-ball data-start-time="0" class="ball ball--1"></div>
+                <div data-ball data-start-time="2" class="ball ball--2"></div>             
+                <div data-ball data-start-time="1" class="ball ball--3"></div>             
+                <div data-ball data-start-time="5" class="ball ball--4"></div>             
+                <div data-ball data-start-time="4" class="ball ball--5"></div> 
             </div>
             <!-- /.first-screen -->
 
@@ -207,6 +222,12 @@
                         </div>
                     </div>
 
+                    <div data-ball data-start-time="0" class="ball ball--6"></div>
+                    <div data-ball data-start-time="2" class="ball ball--7"></div>             
+                    <div data-ball data-start-time="1" class="ball ball--8"></div>             
+                    <div data-ball data-start-time="5" class="ball ball--9"></div>             
+                    <div data-ball data-start-time="4" class="ball ball--10"></div> 
+
                 </div>
 
                 <!-- shape для блока change-way -->
@@ -295,6 +316,10 @@
                         </div>
                     </div>
                 </div>
+
+                <div data-ball data-start-time="1" class="ball ball--11"></div>             
+                <div data-ball data-start-time="5" class="ball ball--12"></div>             
+                <div data-ball data-start-time="4" class="ball ball--13"></div> 
             </div>
             <!-- /.earn -->
 
@@ -422,6 +447,10 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="ball ball--cat">
+                                <img src="img/orb_with_cat.png" alt="">
+                            </div>
                         </div>
 
                         <div class="btns-container">
@@ -445,8 +474,9 @@
                         <stop offset="0.849682" stop-color="#4C4361" stop-opacity="0"/>
                         </linearGradient>
                         </defs>
-                    </svg>                                              
+                    </svg>
                 </div>
+                <div data-ball data-start-time="4" class="ball ball--14"></div>
             </div>
             <!-- /.reedem -->
 
@@ -573,6 +603,9 @@
                                     </svg>                                    
                                 </span>
                             </div>
+
+                            <div data-ball data-start-time="4" class="ball ball--15"></div>
+                            <div data-ball data-start-time="4" class="ball ball--16"></div>
                         </div>
                         <!-- /.game-slider-wrapper -->
 
@@ -711,11 +744,17 @@
             <stop offset="0.849682" stop-color="#4C4361" stop-opacity="0"/>
             </linearGradient>
             </defs>
-        </svg>            
+        </svg>
+        
+        <video id="sourceVideoBall" src="img/Red/Red_1000_px.mp4" loop muted playsinline hidden></video>
     </div>
     
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+    <!-- Добавить в конец HTML перед вашими скриптами -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <script src="js/common.js"></script> 
 </body>
