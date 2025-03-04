@@ -279,9 +279,28 @@
     transform: translateX(25px);
 }
 
-/* Опциональные стили для эффекта нажатия */
 .checkbox label:active::after {
     width: 23px;
+}
+.change-way__bg {
+    position: absolute;
+    bottom: -600px;
+    left: 0;
+    height: 1200px;
+    pointer-events: none;
+    filter: blur(10px);
+    z-index: -1;
+    animation: spin-fade 10s linear infinite;
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    &--right {
+        left: auto;
+        right: 0;
+        animation-delay: 5s;
+    }
 }
 
 @keyframes spin-fade {
