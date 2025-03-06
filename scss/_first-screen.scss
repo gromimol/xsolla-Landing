@@ -45,6 +45,7 @@
         }
         .shadow {
             animation: shadowScale 6s ease-in-out infinite;
+            width: 100%;
             z-index: -1;
           }
     }

@@ -59,80 +59,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// document.addEventListener('DOMContentLoaded', function() {
-//     // Получаем все элементы таба и слайды контента
-//     const tabItems = document.querySelectorAll('.tab-item');
-//     const contentSlides = document.querySelectorAll('.tab-content-slide');
-    
-//     // Создаём синюю подложку, которая будет перемещаться
-//     const tabBackground = document.createElement('div');
-//     tabBackground.className = 'tab-background';
-    
-//     // Добавляем подложку в контейнер табов перед первым табом,
-//     // чтобы она была под табами (z-index)
-//     const tabsContainer = document.querySelector('.reedem__tabs');
-//     tabsContainer.insertBefore(tabBackground, tabsContainer.firstChild);
-    
-//     // Позиционируем подложку на первый активный таб
-//     const activeTab = document.querySelector('.tab-item.active');
-//     if (activeTab) {
-//         positionBackground(activeTab);
-//     }
-    
-//     // Обработчик клика для каждого таба
-//     tabItems.forEach((tab) => {
-//         tab.addEventListener('click', function() {
-//             // Получаем индекс таба
-//             const tabIndex = this.getAttribute('data-tab');
-            
-//             // Если клик на уже активную вкладку - ничего не делаем
-//             if (this.classList.contains('active')) {
-//                 return;
-//             }
-            
-//             // Убираем активный класс со всех табов и слайдов
-//             tabItems.forEach(item => item.classList.remove('active'));
-//             contentSlides.forEach(slide => {
-//                 slide.classList.remove('active');
-//             });
-            
-//             // Добавляем активный класс на текущий таб
-//             this.classList.add('active');
-            
-//             // Анимируем перемещение синей подложки
-//             positionBackground(this);
-            
-//             // Находим соответствующий контент и делаем его активным
-//             const activeContent = document.querySelector(`.tab-content-slide[data-tab="${tabIndex}"]`);
-//             if (activeContent) {
-//                 activeContent.classList.add('active');
-//             }
-//         });
-//     });
-    
-//     // Функция для позиционирования подложки под активный таб
-//     function positionBackground(activeTab) {
-//         // Получаем размеры и позицию активного таба
-//         const rect = activeTab.getBoundingClientRect();
-//         const containerRect = tabsContainer.getBoundingClientRect();
-        
-//         // Вычисляем позицию относительно контейнера табов
-//         const top = rect.top - containerRect.top;
-        
-//         // Задаем стили для подложки с учетом паддингов
-//         tabBackground.style.top = `${top}px`; // Немного выше для лучшего вида
-//         tabBackground.style.height = `${rect.height}px`; // Немного выше для лучшего вида
-//     }
-    
-//     // Обработчик изменения размера окна для пересчета позиции
-//     window.addEventListener('resize', function() {
-//         const currentActive = document.querySelector('.tab-item.active');
-//         if (currentActive) {
-//             positionBackground(currentActive);
-//         }
-//     });
-// });
-
 document.addEventListener('DOMContentLoaded', function() {
     // Получаем все элементы таба и слайды контента
     const tabItems = document.querySelectorAll('.tab-item');
@@ -155,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Устанавливаем фиксированную высоту контента
     const isMobile = window.innerWidth < 768;
-    const slideHeight = isMobile ? 240 : 300;
+    const slideHeight = isMobile ? 290 : 300;
     tabContent.style.height = `${slideHeight}px`;
     
     // Перемещаем все слайды в контейнер
@@ -385,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function() {
             {
                 breakpoint: 1200,
                 settings: {
-                    slidesToShow: 4
+                    slidesToShow: 5
                 }
             },
             {
@@ -394,18 +320,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     slidesToShow: 3
                 }
             },
-            {
-                breakpoint: 768,
-                settings: {
-                    slidesToShow: 2
-                }
-            },
-            {
-                breakpoint: 576,
-                settings: {
-                    slidesToShow: 1
-                }
-            }
         ]
     });
     
@@ -417,26 +331,149 @@ document.addEventListener('DOMContentLoaded', function() {
         $('.game-title').removeClass('active');
         $('.slide').eq(currentSlide).find('.game-title').addClass('active');
     });
+
+    $('.has-submenu').on('click', function(e) {
+      $(this).toggleClass('active');
+    })
+    $('.has-submenu a').on('click', function(e) {
+      e.preventDefault();
+    });
+
+    $('.burger').on('click',function() {
+      $('body').addClass('menu-open');
+    })
+    $('.close').on('click',function() {
+      $('body').removeClass('menu-open');
+    })
 });
 
 document.addEventListener('DOMContentLoaded', function() {
+  // Проверяем, является ли устройство мобильным
+  const isMobile = window.matchMedia('(max-width: 767px)').matches;
+  
+  // Выполняем код только если это не мобильное устройство
+  if (!isMobile) {
     // Регистрируем плагин
     gsap.registerPlugin(ScrollTrigger);
     
     // Создаем последовательность секций
     const sections = ['.earn', '.reedem', '.last-screen'];
     
-    sections.forEach((section, i) => {
-      ScrollTrigger.create({
-        trigger: section,
-        start: 'top top',
-        pin: true,
-        pinSpacing: false,
-        anticipatePin: 1, // Чтобы избежать прыжков при скролле
-        zIndex: 10 - i // Обратный порядок z-index
+    // Функция для конвертации rem в px
+    function remToPx(rem) {
+      return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+    }
+    
+    // Функция для проверки переполнения контента в секции
+    function isContentOverflow(section) {
+      const element = document.querySelector(section);
+      if (!element) return false;
+      
+      // Проверяем, превышает ли контент высоту видимой области
+      const contentHeight = element.scrollHeight;
+      const viewportHeight = window.innerHeight;
+      
+      return contentHeight > viewportHeight * 1.1; // Добавляем небольшой запас (10%)
+    }
+    
+    // Пересоздаем триггеры при изменении размера окна
+    function createTriggers() {
+      // Проверяем, не стало ли устройство мобильным после ресайза
+      const isMobileAfterResize = window.matchMedia('(max-width: 767px)').matches;
+      
+      // Если стало мобильным, удаляем все триггеры и выходим
+      if (isMobileAfterResize) {
+        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+        return;
+      }
+      
+      // Сначала убираем существующие триггеры
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      
+      // Проверяем переполнение last-screen
+      const lastScreenNeedsScroll = isContentOverflow('.last-screen');
+      
+      sections.forEach((section, i) => {
+        const sectionEl = document.querySelector(section);
+        if (!sectionEl) return;
+        
+        // Получаем актуальную высоту с учетом rem
+        const sectionHeight = sectionEl.offsetHeight;
+        
+        // Пропускаем пиннинг last-screen, если контент переполнен
+        if (section === '.last-screen' && lastScreenNeedsScroll) {
+          // Не применяем pin для последней секции, позволяя ей скроллиться
+          return;
+        }
+        
+        ScrollTrigger.create({
+          trigger: section,
+          start: 'top top',
+          end: `+=${sectionHeight}`,
+          pin: true,
+          pinSpacing: false,
+          anticipatePin: 1,
+          zIndex: 10 - i,
+          // Добавляем onRefresh для учета изменений в rem
+          onRefresh: self => {
+            // Обновляем высоту с учетом текущего значения fontSize
+            self.vars.end = `+=${document.querySelector(section).offsetHeight}`;
+          }
+        });
       });
+      
+      // Добавляем специальные стили для last-screen, если нужен скролл
+      const lastScreen = document.querySelector('.last-screen');
+      if (lastScreen) {
+        if (lastScreenNeedsScroll) {
+          // Стили для скроллируемой последней секции
+          lastScreen.style.position = 'relative';
+          lastScreen.style.zIndex = '1';
+          lastScreen.style.overflow = 'auto';
+          lastScreen.style.maxHeight = '100vh';
+          
+          // Добавляем отступ перед last-screen, чтобы он начинался после .reedem
+          const redeemSection = document.querySelector('.reedem');
+          if (redeemSection) {
+            const redeemHeight = redeemSection.offsetHeight;
+            lastScreen.style.marginTop = `${redeemHeight}px`;
+          }
+        } else {
+          // Сбрасываем стили, если скролл не нужен
+          lastScreen.style.position = '';
+          lastScreen.style.zIndex = '';
+          lastScreen.style.overflow = '';
+          lastScreen.style.maxHeight = '';
+          lastScreen.style.marginTop = '';
+        }
+      }
+    }
+    
+    // Создаем триггеры при загрузке
+    createTriggers();
+    
+    // И обновляем при изменении размера окна и/или изменении fontSize (rem)
+    window.addEventListener('resize', gsap.debounce(() => {
+      // Проверяем, изменилось ли значение fontSize
+      createTriggers();
+    }, 200));
+    
+    // Дополнительный MutationObserver для отслеживания изменений fontSize (для rem)
+    const htmlElement = document.documentElement;
+    const fontSizeObserver = new MutationObserver(gsap.debounce(() => {
+      createTriggers();
+    }, 200));
+    
+    // Следим за изменениями стилей HTML-элемента
+    fontSizeObserver.observe(htmlElement, {
+      attributes: true,
+      attributeFilter: ['style']
     });
-  });
+    
+    // Дополнительная проверка после полной загрузки страницы
+    window.addEventListener('load', createTriggers);
+  }
+});
 
 // Wait for the page to load
 window.addEventListener("load", () => {
@@ -697,6 +734,21 @@ document.addEventListener('DOMContentLoaded', function() {
       // Регистрируем плагин ScrollTrigger
       gsap.registerPlugin(ScrollTrigger);
       
+      // Определяем значение отступа в зависимости от размера экрана
+      const getOffset = () => {
+        return window.innerWidth <= 1024 ? 50 : 300;
+      };
+      
+      // Инициализация переменной отступа
+      let scrollOffset = getOffset();
+      
+      // Обновляем значение при изменении размера окна
+      window.addEventListener('resize', () => {
+        scrollOffset = getOffset();
+        // Обновляем все экземпляры ScrollTrigger
+        ScrollTrigger.refresh();
+      });
+      
       // Получаем все блоки change-way__item
       const items = document.querySelectorAll('.change-way__item');
       
@@ -706,7 +758,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (items[0]) {
           // Сначала скрываем внутренний контент
           const firstItemContent = items[0].querySelector('.vertical, .text-block');
-          gsap.set(firstItemContent, { autoAlpha: 0, y: 50 }); // Изменено с -50 на 50 для анимации снизу вверх
+          gsap.set(firstItemContent, { autoAlpha: 0, y: 50 });
           
           // Создаем анимацию для контента первого блока
           gsap.to(firstItemContent, { 
@@ -716,7 +768,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ease: 'power2.out',
             scrollTrigger: {
               trigger: items[0],
-              start: 'top bottom-=300',
+              start: () => `top bottom-=${scrollOffset}`,
               toggleActions: 'play none none reverse'
             }
           });
@@ -736,27 +788,23 @@ document.addEventListener('DOMContentLoaded', function() {
             autoAlpha: 1, 
             x: 0, 
             duration: 0.8, 
-            delay: 0.5, // Добавлена задержка 0.5 секунды
+            delay: 0.5,
             ease: 'power2.out',
             scrollTrigger: {
               trigger: items[1],
-              start: 'top bottom-=300',
+              start: () => `top bottom-=${scrollOffset}`,
               toggleActions: 'play none none reverse'
             },
             onComplete: function() {
-              // После появления блока запускаем анимацию скроллинга
+              // Код анимации скроллинга остаётся без изменений
               if (gamesList) {
-                // Получаем ширину скроллинга (полная ширина контента минус видимая часть)
                 const scrollWidth = gamesList.scrollWidth - gamesList.clientWidth;
-                
-                // Если есть что скроллить
                 if (scrollWidth > 0) {
-                  // Анимация скроллинга с замедлением к концу
                   gsap.to(gamesList, {
                     scrollLeft: scrollWidth,
-                    duration: 4, // Более длинная продолжительность для плавности
-                    ease: "power1.out", // Плавное замедление
-                    delay: 0.3 // Небольшая задержка после появления
+                    duration: 4,
+                    ease: "power1.out",
+                    delay: 0.3
                   });
                 }
               }
@@ -766,18 +814,16 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Для третьего блока (появление)
         if (items.length > 2) {
-          // Сначала скрываем внутренний контент
           const thirdItemContent = items[2].querySelector('.change-way__item__row');
           gsap.set(thirdItemContent, { autoAlpha: 0 });
           
-          // Создаем анимацию для контента третьего блока
           gsap.to(thirdItemContent, { 
             autoAlpha: 1, 
             duration: 1, 
             ease: 'power2.out',
             scrollTrigger: {
               trigger: items[2],
-              start: 'top bottom-=300',
+              start: () => `top bottom-=${scrollOffset}`,
               toggleActions: 'play none none reverse'
             }
           });
@@ -797,7 +843,7 @@ document.addEventListener('DOMContentLoaded', function() {
           ease: 'power2.out',
           scrollTrigger: {
             trigger: btnContainer,
-            start: 'top bottom-=250',
+            start: () => `top bottom-=${scrollOffset > 250 ? 250 : scrollOffset}`,
             toggleActions: 'play none none reverse'
           }
         });
@@ -806,3 +852,4 @@ document.addEventListener('DOMContentLoaded', function() {
       console.warn('GSAP или ScrollTrigger не найдены. Убедитесь, что библиотеки загружены.');
     }
   });
+
