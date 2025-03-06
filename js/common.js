@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Если тип устройства изменился, обновляем высоту
         if (wasIsMobile !== newIsMobile) {
-            const newSlideHeight = newIsMobile ? 240 : 300;
+            const newSlideHeight = newIsMobile ? 290 : 300;
             
             // Обновляем высоту контейнера
             tabContent.style.height = `${newSlideHeight}px`;
