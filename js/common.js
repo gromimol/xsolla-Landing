@@ -347,6 +347,133 @@ document.addEventListener('DOMContentLoaded', function() {
     })
 });
 
+// document.addEventListener('DOMContentLoaded', function() {
+//   // Проверяем, является ли устройство мобильным
+//   const isMobile = window.matchMedia('(max-width: 767px)').matches;
+  
+//   // Выполняем код только если это не мобильное устройство
+//   if (!isMobile) {
+//     // Регистрируем плагин
+//     gsap.registerPlugin(ScrollTrigger);
+    
+//     // Создаем последовательность секций
+//     const sections = ['.earn', '.reedem', '.last-screen'];
+    
+//     // Функция для конвертации rem в px
+//     function remToPx(rem) {
+//       return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+//     }
+    
+//     // Функция для проверки переполнения контента в секции
+//     function isContentOverflow(section) {
+//       const element = document.querySelector(section);
+//       if (!element) return false;
+      
+//       // Проверяем, превышает ли контент высоту видимой области
+//       const contentHeight = element.scrollHeight;
+//       const viewportHeight = window.innerHeight;
+      
+//       return contentHeight > viewportHeight * 1.1; // Добавляем небольшой запас (10%)
+//     }
+    
+//     // Пересоздаем триггеры при изменении размера окна
+//     function createTriggers() {
+//       // Проверяем, не стало ли устройство мобильным после ресайза
+//       const isMobileAfterResize = window.matchMedia('(max-width: 767px)').matches;
+      
+//       // Если стало мобильным, удаляем все триггеры и выходим
+//       if (isMobileAfterResize) {
+//         ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+//         return;
+//       }
+      
+//       // Сначала убираем существующие триггеры
+//       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      
+//       // Проверяем переполнение last-screen
+//       const lastScreenNeedsScroll = isContentOverflow('.last-screen');
+      
+//       sections.forEach((section, i) => {
+//         const sectionEl = document.querySelector(section);
+//         if (!sectionEl) return;
+        
+//         // Получаем актуальную высоту с учетом rem
+//         const sectionHeight = sectionEl.offsetHeight;
+        
+//         // Пропускаем пиннинг last-screen, если контент переполнен
+//         if (section === '.last-screen' && lastScreenNeedsScroll) {
+//           // Не применяем pin для последней секции, позволяя ей скроллиться
+//           return;
+//         }
+        
+//         ScrollTrigger.create({
+//           trigger: section,
+//           start: 'top top',
+//           end: `+=${sectionHeight}`,
+//           pin: true,
+//           pinSpacing: false,
+//           anticipatePin: 1,
+//           zIndex: 10 - i,
+//           // Добавляем onRefresh для учета изменений в rem
+//           onRefresh: self => {
+//             // Обновляем высоту с учетом текущего значения fontSize
+//             self.vars.end = `+=${document.querySelector(section).offsetHeight}`;
+//           }
+//         });
+//       });
+      
+//       // Добавляем специальные стили для last-screen, если нужен скролл
+//       const lastScreen = document.querySelector('.last-screen');
+//       if (lastScreen) {
+//         if (lastScreenNeedsScroll) {
+//           // Стили для скроллируемой последней секции
+//           lastScreen.style.position = 'relative';
+//           lastScreen.style.zIndex = '1';
+//           lastScreen.style.overflow = 'auto';
+//           lastScreen.style.maxHeight = '100vh';
+          
+//           // Добавляем отступ перед last-screen, чтобы он начинался после .reedem
+//           const redeemSection = document.querySelector('.reedem');
+//           if (redeemSection) {
+//             const redeemHeight = redeemSection.offsetHeight;
+//             lastScreen.style.marginTop = `${redeemHeight}px`;
+//           }
+//         } else {
+//           // Сбрасываем стили, если скролл не нужен
+//           lastScreen.style.position = '';
+//           lastScreen.style.zIndex = '';
+//           lastScreen.style.overflow = '';
+//           lastScreen.style.maxHeight = '';
+//           lastScreen.style.marginTop = '';
+//         }
+//       }
+//     }
+    
+//     // Создаем триггеры при загрузке
+//     createTriggers();
+    
+//     // И обновляем при изменении размера окна и/или изменении fontSize (rem)
+//     window.addEventListener('resize', gsap.debounce(() => {
+//       // Проверяем, изменилось ли значение fontSize
+//       createTriggers();
+//     }, 200));
+    
+//     // Дополнительный MutationObserver для отслеживания изменений fontSize (для rem)
+//     const htmlElement = document.documentElement;
+//     const fontSizeObserver = new MutationObserver(gsap.debounce(() => {
+//       createTriggers();
+//     }, 200));
+    
+//     // Следим за изменениями стилей HTML-элемента
+//     fontSizeObserver.observe(htmlElement, {
+//       attributes: true,
+//       attributeFilter: ['style']
+//     });
+    
+//     // Дополнительная проверка после полной загрузки страницы
+//     window.addEventListener('load', createTriggers);
+//   }
+// });
 document.addEventListener('DOMContentLoaded', function() {
   // Проверяем, является ли устройство мобильным
   const isMobile = window.matchMedia('(max-width: 767px)').matches;
@@ -358,11 +485,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Создаем последовательность секций
     const sections = ['.earn', '.reedem', '.last-screen'];
-    
-    // Функция для конвертации rem в px
-    function remToPx(rem) {
-      return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
-    }
     
     // Функция для проверки переполнения контента в секции
     function isContentOverflow(section) {
@@ -390,22 +512,47 @@ document.addEventListener('DOMContentLoaded', function() {
       // Сначала убираем существующие триггеры
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
       
+      // ВАЖНО: Убираем margin-top у last-screen
+      const lastScreen = document.querySelector('.last-screen');
+      if (lastScreen) {
+        lastScreen.style.marginTop = '0';
+      }
+      
       // Проверяем переполнение last-screen
       const lastScreenNeedsScroll = isContentOverflow('.last-screen');
+      
+      // Для redeem секции особый подход - не используем pin
+      const redeemSection = document.querySelector('.reedem');
+      if (redeemSection) {
+        // Убираем стили пина, если они были
+        redeemSection.style.position = '';
+        redeemSection.style.zIndex = '';
+        redeemSection.style.top = '';
+        
+        // Устанавливаем auto высоту для секции redeem
+        redeemSection.style.height = 'auto';
+        redeemSection.style.minHeight = 'auto';
+      }
       
       sections.forEach((section, i) => {
         const sectionEl = document.querySelector(section);
         if (!sectionEl) return;
-        
-        // Получаем актуальную высоту с учетом rem
+          
+        // Получаем актуальную высоту секции
         const sectionHeight = sectionEl.offsetHeight;
         
         // Пропускаем пиннинг last-screen, если контент переполнен
         if (section === '.last-screen' && lastScreenNeedsScroll) {
           // Не применяем pin для последней секции, позволяя ей скроллиться
+          sectionEl.style.position = 'relative';
+          sectionEl.style.zIndex = '1';
+          sectionEl.style.overflow = 'auto';
+          sectionEl.style.maxHeight = '100vh';
+          sectionEl.style.marginTop = '0'; // ВАЖНО: Гарантируем отсутствие отступа
           return;
         }
         
+        // Стандартный подход для других секций
         ScrollTrigger.create({
           trigger: section,
           start: 'top top',
@@ -413,65 +560,70 @@ document.addEventListener('DOMContentLoaded', function() {
           pin: true,
           pinSpacing: false,
           anticipatePin: 1,
-          zIndex: 10 - i,
-          // Добавляем onRefresh для учета изменений в rem
-          onRefresh: self => {
-            // Обновляем высоту с учетом текущего значения fontSize
-            self.vars.end = `+=${document.querySelector(section).offsetHeight}`;
-          }
+          zIndex: 10 - i
         });
       });
       
-      // Добавляем специальные стили для last-screen, если нужен скролл
-      const lastScreen = document.querySelector('.last-screen');
-      if (lastScreen) {
-        if (lastScreenNeedsScroll) {
-          // Стили для скроллируемой последней секции
-          lastScreen.style.position = 'relative';
-          lastScreen.style.zIndex = '1';
-          lastScreen.style.overflow = 'auto';
-          lastScreen.style.maxHeight = '100vh';
-          
-          // Добавляем отступ перед last-screen, чтобы он начинался после .reedem
-          const redeemSection = document.querySelector('.reedem');
-          if (redeemSection) {
-            const redeemHeight = redeemSection.offsetHeight;
-            lastScreen.style.marginTop = `${redeemHeight}px`;
-          }
-        } else {
-          // Сбрасываем стили, если скролл не нужен
-          lastScreen.style.position = '';
-          lastScreen.style.zIndex = '';
-          lastScreen.style.overflow = '';
-          lastScreen.style.maxHeight = '';
-          lastScreen.style.marginTop = '';
+      // Обеспечиваем плавное соединение между секциями
+      const style = document.createElement('style');
+      style.id = 'scroll-fix-style';
+      style.textContent = `
+        .reedem {
+          padding-bottom: 30px;
         }
+        .last-screen {
+          margin-top: 0 !important;
+        }
+      `;
+      
+      // Убираем старый стиль, если он существует
+      const oldStyle = document.getElementById('scroll-fix-style');
+      if (oldStyle) {
+        oldStyle.remove();
       }
+      
+      // Добавляем новый стиль
+      document.head.appendChild(style);
     }
     
     // Создаем триггеры при загрузке
     createTriggers();
     
-    // И обновляем при изменении размера окна и/или изменении fontSize (rem)
+    // И обновляем при изменении размера окна
     window.addEventListener('resize', gsap.debounce(() => {
-      // Проверяем, изменилось ли значение fontSize
       createTriggers();
     }, 200));
     
-    // Дополнительный MutationObserver для отслеживания изменений fontSize (для rem)
-    const htmlElement = document.documentElement;
-    const fontSizeObserver = new MutationObserver(gsap.debounce(() => {
-      createTriggers();
+    // Дополнительный MutationObserver для отслеживания изменений
+    const observer = new MutationObserver(gsap.debounce(() => {
+      // Проверяем, не появился ли снова отступ у last-screen
+      const lastScreen = document.querySelector('.last-screen');
+      if (lastScreen && lastScreen.style.marginTop !== '0px') {
+        lastScreen.style.marginTop = '0';
+      }
     }, 200));
     
-    // Следим за изменениями стилей HTML-элемента
-    fontSizeObserver.observe(htmlElement, {
-      attributes: true,
-      attributeFilter: ['style']
-    });
+    // Следим за изменениями у last-screen
+    const lastScreen = document.querySelector('.last-screen');
+    if (lastScreen) {
+      observer.observe(lastScreen, {
+        attributes: true,
+        attributeFilter: ['style']
+      });
+    }
     
     // Дополнительная проверка после полной загрузки страницы
-    window.addEventListener('load', createTriggers);
+    window.addEventListener('load', function() {
+      createTriggers();
+      
+      // Дополнительная защита - сбросим margin через 1 секунду после загрузки
+      setTimeout(() => {
+        const lastScreen = document.querySelector('.last-screen');
+        if (lastScreen) {
+          lastScreen.style.marginTop = '0';
+        }
+      }, 1000);
+    });
   }
 });
 
