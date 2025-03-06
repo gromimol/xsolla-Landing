@@ -2195,12 +2195,15 @@ b, strong, .font-700 {
   color: var(--light-color);
 }
 
-@media (max-width: 1600px) {
+@media (max-width: 1700px) {
   .first-screen__svg-1, .first-screen__svg-2 {
     animation: none !important;
     width: 100%;
     height: 50vh;
     opacity: 1;
+  }
+  .ball--5 {
+    right: 8vw;
   }
 }
 @media (max-width: 1460px) {
@@ -2662,6 +2665,13 @@ b, strong, .font-700 {
   }
   .game-slider .slick-track {
     gap: 20px;
+  }
+  .first-screen__right {
+    max-width: 240px;
+    margin: 0 auto;
+  }
+  .first-screen__right .shadow {
+    max-height: 50px;
   }
 }
 @media (max-width: 640px) {
