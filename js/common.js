@@ -479,6 +479,12 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addEventListener("load", () => {
     // Get the source video - we'll use only one video for all balls
     const sourceVideo = document.getElementById("sourceVideoBall");
+
+    document.querySelectorAll("[data-ball]").forEach(element => {
+      element.style.opacity = "0";
+      element.style.transition = "opacity 1s ease"; // Добавляем плавное появление с длительностью 1 секунда
+      element.style.visibility = "hidden"; // Полностью скрываем элемент, чтобы черные пятна точно не были видны
+  });
     
     // Animation types - убрали вращение
     const ANIMATION_TYPES = {
@@ -714,14 +720,46 @@ window.addEventListener("load", () => {
       element.setAttribute("data-animation-type", animationType);
     }
     
+    // Функция для плавного отображения шаров
+    function showBalls() {
+      // Дополнительная задержка в 1 секунду перед началом показа шаров
+      setTimeout(() => {
+        document.querySelectorAll("[data-ball]").forEach((element, index) => {
+          // Добавляем различную задержку для каждого шара
+          setTimeout(() => {
+            element.style.visibility = "visible"; // Сначала делаем элемент видимым
+            element.style.opacity = "1";
+            
+            // Также делаем видимым canvas внутри
+            const canvas = element.querySelector("canvas");
+            if (canvas) {
+              canvas.style.opacity = "1";
+            }
+          }, index * 100); // Каждый шар появляется с задержкой относительно предыдущего
+        });
+      }, 1000); // Увеличиваем задержку до 1 секунды
+    }
+
     // When the video is ready
     sourceVideo.addEventListener("loadedmetadata", () => {
       // Set up all balls
       setupBalls();
       
       // Start the video
-      sourceVideo.play();
+      sourceVideo.play().catch(error => {
+        console.log("Автовоспроизведение невозможно:", error);
+      });
+
+      // Показываем шары, когда видео готово
+      showBalls();
     });
+
+    // Резервный вариант - если видео уже загружено
+    if (sourceVideo.readyState >= 3) { // HAVE_FUTURE_DATA или HAVE_ENOUGH_DATA
+      setupBalls();
+      sourceVideo.play();
+      showBalls();
+    }
     
     // Ensure video loads
     sourceVideo.load();
