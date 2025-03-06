@@ -76,7 +76,7 @@
         font-size: 6.6rem;
     }
     .first-screen__left__text p {
-        font-size: 1.65rem;
+        font-size: max(13px, 1.65rem);
     }
     .text-list {
         font-size: 3.4rem;
@@ -106,7 +106,7 @@
         height: 22rem;
     }
     .change-way__item .text-block .title {
-        font-size: 2.4rem;
+        font-size: max(18px, 2.4rem);
     }
     .change-way__item .text-block .text {
         font-size: 1.6rem;
@@ -279,6 +279,9 @@
     html {
         font-size: 0.8vw;
     }
+    .change-way__item .text-block .text {
+        font-size: max(14px, 1.6rem);
+    }
 }
 // 990
 @media(max-width: 767px) {
@@ -321,10 +324,13 @@
         font-size: 16px;
     }
     .accordion-content,
-    .accordion-content p {
+    .accordion-content p,
+    .earn__card .description .title {
         font-size: 14px;
     }
-    .tab-item .text {
+    .tab-item .text,
+    .earn__card .description .text,
+    .earn .bonus-list__item {
         font-size: 12px;
     }
     .change-way__item .text-block .text {
@@ -496,6 +502,9 @@
             max-height: 50px;
         }
     }
+    .earn__card .description .title {
+        margin-bottom: 0;
+    }
 }
 @media(max-width: 640px) {
     .footer__wrapper {
@@ -520,7 +529,83 @@
             width: 100px;
         }
     }
+    .floating-svg,
+    .slider-shape {
+        animation: unset;
+    }
+    .ball--cat {
+        width: 70px;
+        top: -175px;
+        left: -20px;
+    }
+    .ball {
+        &--1 {
+            width: 7vw;
+            top: 15%;
+            left: 80vw;
+        }
+        &--2 {
+            width: 31vw;
+            top: -5vw;
+            left: 30vw;
+        }
+        &--3 {
+
+            width: 18vw;
+            top: 17%;
+            right: auto;
+            left: -10px;
+        }
+        &--4 {
+            width: 26vw;
+            right: -3vw;
+            top: 30%;
+            filter: blur(10px);
+            z-index: 1;
+        }
+        &--5 {
+            right: 40vw;
+            z-index: 1;
+        }
+        &--6 {
+            width: 11vw;
+            left: 1%;
+        }
+        &--7 {
+            bottom: 0;
+            left: 30vw;
+        }
+        &--10 {
+            width: 21rem;
+            right: 0;
+            bottom: 2vw;
+            filter: blur(7px)
+        }
+        &--12 {
+            right: auto;
+            bottom: auto;
+            top: 46%;
+            left: -30px;
+        } 
+        &--13 {
+            right: auto;
+            left: 18vw;
+            filter: blur(3px);
+        }
+        &--15 {
+            width: 15vw;
+            top: -10%;
+            right: -2rem;
+            filter: blur(5px)
+        }
+        &--16 {
+            width: 16rem;
+            right: -9rem;
+            top: 30rem;
+        }
+    }
 }
+// 640
 @media(max-width: 375px) {
     .first-screen .btn-container,
     .reedem .btns-container{

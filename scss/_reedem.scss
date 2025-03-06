@@ -98,9 +98,12 @@
     }
 
     .text {
-        font-size: 1.4rem;
+        font-size: max(11px, 1.4rem);
         line-height: 1.57;
-        color: inherit
+        color: inherit;
+        @media(max-width: 990px) {
+            line-height: 1.3;
+        }
     }
 }
 
