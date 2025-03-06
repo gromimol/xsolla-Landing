@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Обработчик изменения размера окна
     window.addEventListener('resize', function() {
         // Проверяем, изменился ли тип устройства
-        const wasIsMobile = slideHeight === 240;
+        const wasIsMobile = slideHeight === 290;
         const newIsMobile = window.innerWidth < 768;
         
         // Если тип устройства изменился, обновляем высоту
