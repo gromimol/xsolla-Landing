@@ -503,140 +503,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Wait for the page to load
 window.addEventListener("load", () => {
-  // Проверяем ширину экрана
-  const isMobile = window.innerWidth < 1200;
-  
-  // Для отладки
-  console.log("Ширина экрана:", window.innerWidth, "Мобильный режим:", isMobile);
-  
-  // Получаем элементы из DOM
+  // Получаем видео-элемент для всех шаров
   const sourceVideo = document.getElementById("sourceVideoBall");
-  const staticBallPicture = document.getElementById("staticBallPicture");
   
-  // Получаем URL изображения для мобильных устройств
-  let staticImageSrc = "";
-  if (staticBallPicture) {
-      // Сначала проверяем, есть ли подходящий source для WebP
-      const webpSource = staticBallPicture.querySelector("source[type='image/webp']");
-      if (webpSource && isWebPSupported()) {
-          staticImageSrc = webpSource.srcset;
-      } else {
-          // Иначе берем изображение из img
-          const imgElement = staticBallPicture.querySelector("img");
-          if (imgElement) {
-              staticImageSrc = imgElement.src;
-          }
-      }
-  }
+  // Сначала скрываем все шары, чтобы не было видно черных пятен
+  document.querySelectorAll("[data-ball]").forEach(element => {
+      element.style.opacity = "0";
+      element.style.transition = "opacity 1s ease";
+      element.style.visibility = "hidden";
+  });
   
-  // Функция для проверки поддержки WebP
-  function isWebPSupported() {
-      // Простая проверка - в реальных условиях лучше использовать более надежный метод
-      const canvas = document.createElement('canvas');
-      if (canvas.getContext && canvas.getContext('2d')) {
-          return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
-      }
-      return false;
-  }
+  // Типы анимации
+  const ANIMATION_TYPES = {
+      UP_DOWN: 'up-down',
+      LEFT_RIGHT: 'left-right'
+  };
   
-  // Инициализируем шары в зависимости от ширины экрана
-  if (isMobile) {
-      setupStaticBalls();
-  } else {
-      setupWebGLBalls();
-  }
-  
-  // Функция для настройки статичных шаров на мобильных устройствах
-  function setupStaticBalls() {
-      console.log("Настраиваем статичные шары для мобильных устройств");
-      console.log("Путь к статичному изображению:", staticImageSrc);
-      
+  // Настраиваем шары
+  function setupBalls() {
+      // Найти все элементы с атрибутом data-ball
       document.querySelectorAll("[data-ball]").forEach((element, index) => {
-          // Очищаем содержимое элемента
-          while (element.firstChild) {
-              element.removeChild(element.firstChild);
-          }
-          
-          // Создаем круглый контейнер для изображения
-          const imgWrapper = document.createElement("div");
-          imgWrapper.style.width = "100%";
-          imgWrapper.style.height = "100%";
-          imgWrapper.style.borderRadius = "50%";
-          imgWrapper.style.overflow = "hidden";
-          imgWrapper.style.position = "relative";
-          
-          // Создаем изображение
-          const img = document.createElement("img");
-          
-          // Проверяем наличие пути к изображению
-          if (staticImageSrc) {
-              img.src = staticImageSrc; // Используем изображение из picture
-          } else {
-              // Резервный путь, если staticImageSrc пуст
-              img.src = "img/orb_static.png";
-              console.warn("Не удалось получить путь к изображению из picture, используем резервный путь");
-          }
-          
-          img.style.width = "100%";
-          img.style.height = "100%";
-          img.style.objectFit = "cover";
-          
-          // Добавляем обработчик ошибки загрузки
-          img.onerror = function() {
-              console.error("Ошибка загрузки изображения:", this.src);
-              // Пробуем использовать резервный путь
-              if (this.src !== "img/orb_static.png") {
-                  this.src = "img/orb_static.png";
-              }
-          };
-          
-          // Добавляем изображение в обертку
-          imgWrapper.appendChild(img);
-          element.appendChild(imgWrapper);
-          
-          // Показываем шар
-          element.style.visibility = "visible";
-          element.style.opacity = "1";
-          
-          // Применяем легкую анимацию для мобильных
-          applyMobileAnimation(element, index);
-      });
-  }
-  
-  // Функция для настройки WebGL шаров на десктопных устройствах
-  function setupWebGLBalls() {
-      // Сначала скрываем все шары
-      document.querySelectorAll("[data-ball]").forEach(element => {
-          element.style.opacity = "0";
-          element.style.transition = "opacity 1s ease";
-          element.style.visibility = "hidden";
-      });
-      
-      // Типы анимации
-      const ANIMATION_TYPES = {
-          UP_DOWN: 'up-down',
-          LEFT_RIGHT: 'left-right'
-      };
-      
-      // Настраиваем каждый шар
-      document.querySelectorAll("[data-ball]").forEach((element, index) => {
-          // Пропускаем, если элемент слишком мал
+          // Пропускаем слишком маленькие элементы
           if (element.clientWidth < 5) return;
           
-          // Очищаем содержимое элемента
-          while (element.firstChild) {
-              element.removeChild(element.firstChild);
-          }
-          
-          // Создаем canvas для WebGL
+          // Создаем canvas элемент
           const canvas = document.createElement("canvas");
           const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
           
-          // Если WebGL не поддерживается, используем статичное изображение
-          if (!gl) {
-              setupStaticBallFallback(element);
-              return;
-          }
+          // Если WebGL не поддерживается, пропускаем
+          if (!gl) return;
           
           // Настраиваем canvas
           canvas.style.opacity = "0";
@@ -653,7 +548,7 @@ window.addEventListener("load", () => {
           
           // Заменяем содержимое элемента оберткой
           element.replaceChildren(wrapper);
-          element.style.overflow = "visible"; // Позволяем анимации выходить за границы
+          element.style.overflow = "visible"; // Чтобы анимация могла выходить за границы
           
           // Добавляем случайный начальный поворот
           const initialRotation = Math.floor(Math.random() * 360) - 180; // От -180 до +180 градусов
@@ -671,7 +566,7 @@ window.addEventListener("load", () => {
           canvas.timeOffset = startTime;
           
           // Устанавливаем текущее время видео для этого шара
-          if (sourceVideo.readyState >= 2) { // Если видео готово
+          if (sourceVideo.readyState >= 2) {
               sourceVideo.currentTime = startTime % sourceVideo.duration;
           }
           
@@ -756,9 +651,6 @@ window.addEventListener("load", () => {
           
           // Функция анимации для обновления canvas с кадрами видео
           function render() {
-              // Прекращаем рендеринг, если размер экрана стал меньше 1200px
-              if (window.innerWidth < 1200) return;
-              
               if (!gl) return;
               
               gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -777,6 +669,9 @@ window.addEventListener("load", () => {
               canvas.width = element.clientWidth;
               canvas.height = element.clientWidth;
               gl.viewport(0, 0, canvas.width, canvas.height);
+              
+              // Обновляем padding для круга
+              gl.uniform1f(paddingLocation, -3 / canvas.width);
           }
           
           window.addEventListener("resize", handleResize);
@@ -784,130 +679,78 @@ window.addEventListener("load", () => {
           render();
           canvas.style.opacity = "1";
           
-          // Применяем GSAP анимации к элементу
-          applyDesktopAnimation(element, index, ANIMATION_TYPES);
-      });
-      
-      // Показываем шары с задержкой
-      showBalls();
-  }
-  
-  // Функция для резервного варианта - статичное изображение вместо WebGL
-  function setupStaticBallFallback(element) {
-      const imgWrapper = document.createElement("div");
-      imgWrapper.style.width = "100%";
-      imgWrapper.style.height = "100%";
-      imgWrapper.style.borderRadius = "50%";
-      imgWrapper.style.overflow = "hidden";
-      imgWrapper.style.position = "relative";
-      
-      const img = document.createElement("img");
-      img.src = staticImageSrc;
-      img.style.width = "100%";
-      img.style.height = "100%";
-      img.style.objectFit = "cover";
-      
-      imgWrapper.appendChild(img);
-      element.appendChild(imgWrapper);
-      element.style.opacity = "1";
-      element.style.visibility = "visible";
-      
-      // Применяем анимацию как для десктопа
-      applyDesktopAnimation(element, Math.floor(Math.random() * 10), {
-          UP_DOWN: 'up-down',
-          LEFT_RIGHT: 'left-right'
+          // Применяем GSAP анимации
+          applyAnimation(element, index);
       });
   }
   
-  // Функция для применения анимации к шару на мобильных
-  function applyMobileAnimation(element, index) {
-      // Более легкие движения для мобильных
-      const duration = 3 + Math.random() * 2; // 3-5 сек
-      const delay = Math.random() * 2; // 0-2 сек задержки
-      const ease = "sine.inOut";
+  // Функция для применения анимации к шару
+  function applyAnimation(element, index) {
+      // Определяем параметры анимации в зависимости от размера экрана
+      const isMobile = window.innerWidth < 1200;
       
-      // Определяем направление движения на основе индекса
-      if (index % 2 === 0) {
-          // Легкое движение вверх-вниз
-          gsap.to(element, {
-              y: -7 - Math.random() * 5, // Небольшое движение (7-12px)
-              duration: duration,
-              ease: ease,
-              repeat: -1,
-              yoyo: true,
-              delay: delay
-          });
+      // Случайные параметры анимации
+      let duration, amplitudeX, amplitudeY;
+      
+      if (isMobile) {
+          // Более короткие и мелкие движения для мобильных
+          duration = 3 + Math.random() * 2; // 3-5 секунд
+          amplitudeX = 15; // Меньшая амплитуда для мобильных
+          amplitudeY = 20;
       } else {
-          // Легкое движение влево-вправо
-          gsap.to(element, {
-              x: -5 + Math.random() * 10, // Небольшое движение (-5 до +5px)
-              duration: duration,
-              ease: ease,
-              repeat: -1,
-              yoyo: true,
-              delay: delay
-          });
+          // Более длинные и заметные движения для десктопа
+          duration = 5 + Math.random() * 5; // 5-10 секунд
+          amplitudeX = 25; // Большая амплитуда для десктопа
+          amplitudeY = 40;
       }
-  }
-  
-  // Функция для применения анимации к шару на десктопах
-  function applyDesktopAnimation(element, index, ANIMATION_TYPES) {
+      
+      const delay = Math.random() * 3; // 0-3 секунды задержки
+      const ease = "sine.inOut"; // Плавное ускорение/замедление
+      
       // Выбираем тип анимации
       const animationTypes = Object.values(ANIMATION_TYPES);
       const animationType = animationTypes[index % animationTypes.length]; // Распределяем анимации между шарами
       
-      // Случайные параметры для анимаций
-      const duration = 5 + Math.random() * 5; // 5-10 секунд
-      const delay = Math.random() * 3; // 0-3 секунды задержки
-      const ease = "sine.inOut"; // Плавное ускорение/замедление
-      
       // Применяем анимацию в зависимости от типа
-      switch (animationType) {
-          case 'up-down':
-              // Более выраженное движение вверх-вниз
-              gsap.to(element, {
-                  y: -40 - Math.random() * 20, // 40-60px
-                  duration: duration,
-                  ease: ease,
-                  repeat: -1,
-                  yoyo: true,
-                  delay: delay
-              });
-              break;
-              
-          case 'left-right':
-              // Плавное движение влево-вправо
-              gsap.to(element, {
-                  x: -25 + Math.random() * 50, // -25 до +25px
-                  duration: duration,
-                  ease: ease,
-                  repeat: -1,
-                  yoyo: true,
-                  delay: delay
-              });
-              break;
-      }
-      
-      // Добавляем небольшую противоположную анимацию для более естественного эффекта "парения"
-      if (animationType === 'up-down') {
-          // Если основная анимация вверх-вниз, добавляем легкое движение влево-вправо
+      if (animationType === ANIMATION_TYPES.UP_DOWN) {
+          // Движение вверх-вниз
           gsap.to(element, {
-              x: -10 + Math.random() * 20, // Небольшое горизонтальное движение
-              duration: duration * 1.5, // Немного другой период для асинхронности
+              y: -amplitudeY - Math.random() * 10, // Случайная амплитуда в пределах диапазона
+              duration: duration,
               ease: ease,
               repeat: -1,
               yoyo: true,
-              delay: delay + 0.5 // Небольшая дополнительная задержка
+              delay: delay
+          });
+          
+          // Дополнительное небольшое движение по X для естественности
+          gsap.to(element, {
+              x: -amplitudeX/2 + Math.random() * amplitudeX, // Меньшее движение по X
+              duration: duration * 1.5, // Другой период для асинхронности
+              ease: ease,
+              repeat: -1,
+              yoyo: true,
+              delay: delay + 0.5
           });
       } else {
-          // Если основная анимация влево-вправо, добавляем легкое движение вверх-вниз
+          // Движение влево-вправо
           gsap.to(element, {
-              y: -15 - Math.random() * 10, // Небольшое вертикальное движение
-              duration: duration * 1.3, // Другой период
+              x: -amplitudeX + Math.random() * (amplitudeX * 2), // Случайная амплитуда в пределах диапазона
+              duration: duration,
               ease: ease,
               repeat: -1,
               yoyo: true,
-              delay: delay + 0.7 // Другая задержка
+              delay: delay
+          });
+          
+          // Дополнительное небольшое движение по Y для естественности
+          gsap.to(element, {
+              y: -amplitudeY/2 - Math.random() * 10, // Меньшее движение по Y
+              duration: duration * 1.3, 
+              ease: ease,
+              repeat: -1,
+              yoyo: true,
+              delay: delay + 0.7
           });
       }
       
@@ -915,7 +758,7 @@ window.addEventListener("load", () => {
       element.setAttribute("data-animation-type", animationType);
   }
   
-  // Функция для плавного отображения шаров (только для WebGL)
+  // Функция для плавного отображения шаров
   function showBalls() {
       // Дополнительная задержка в 1 секунду перед началом показа шаров
       setTimeout(() => {
@@ -932,54 +775,38 @@ window.addEventListener("load", () => {
                   }
               }, index * 100); // Каждый шар появляется с задержкой относительно предыдущего
           });
-      }, 1000);
+      }, 1000); // Увеличиваем задержку до 1 секунды
   }
   
-  // Обработчик изменения размера окна
-  window.addEventListener("resize", handleWindowResize);
-  
-  function handleWindowResize() {
-      const wasDesktop = window.innerWidth >= 1200;
-      const isDesktopNow = window.innerWidth >= 1200;
-      
-      // Если тип устройства изменился
-      if (wasDesktop !== isDesktopNow) {
-          // Остановить все GSAP анимации
-          gsap.killTweensOf(document.querySelectorAll("[data-ball]"));
-          
-          // Сбросить трансформации
-          document.querySelectorAll("[data-ball]").forEach(element => {
-              element.style.transform = "";
-          });
-          
-          // Переключаемся между типами устройств
-          if (isDesktopNow) {
-              if (sourceVideo) {
-                  sourceVideo.play().catch(error => {
-                      console.log("Автовоспроизведение невозможно:", error);
-                  });
-              }
-              setupWebGLBalls();
-          } else {
-              if (sourceVideo && !sourceVideo.paused) {
-                  sourceVideo.pause();
-              }
-              setupStaticBalls();
-          }
-      }
-  }
-  
-  // Слушаем загрузку видео и запускаем рендеринг
+  // Запускаем видео и настраиваем шары
   if (sourceVideo) {
       sourceVideo.addEventListener("loadedmetadata", () => {
-          if (!isMobile) {
-              sourceVideo.play().catch(error => {
-                  console.log("Автовоспроизведение невозможно:", error);
-              });
-          }
+          // Запускаем видео
+          sourceVideo.play().catch(error => {
+              console.log("Автовоспроизведение невозможно:", error);
+              
+              // Если автовоспроизведение не работает, все равно настраиваем шары
+              setupBalls();
+              showBalls();
+          });
+          
+          // Настраиваем шары
+          setupBalls();
+          
+          // Показываем шары когда видео готово
+          showBalls();
       });
       
-      // Загружаем видео
+      // Резервный вариант - если видео уже загружено
+      if (sourceVideo.readyState >= 3) { // HAVE_FUTURE_DATA или HAVE_ENOUGH_DATA
+          setupBalls();
+          sourceVideo.play().catch(error => {
+              console.log("Автовоспроизведение невозможно:", error);
+          });
+          showBalls();
+      }
+      
+      // Обеспечиваем загрузку видео
       sourceVideo.load();
   }
 });
