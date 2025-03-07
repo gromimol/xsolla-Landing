@@ -760,13 +760,11 @@ window.addEventListener("load", () => {
     
     // Выбираем тип анимации
     const animationTypes = Object.values(ANIMATION_TYPES);
-    const animationType = animationTypes[index % animationTypes.length]; // Распределяем анимации между шарами
+    const animationType = animationTypes[index % animationTypes.length];
     
-    // Применяем анимацию в зависимости от типа
     if (animationType === ANIMATION_TYPES.UP_DOWN) {
-      // Движение вверх-вниз
       gsap.to(element, {
-        y: -amplitudeY - Math.random() * 10, // Случайная амплитуда в пределах диапазона
+        y: -amplitudeY - Math.random() * 10,
         duration: duration,
         ease: ease,
         repeat: -1,
@@ -774,10 +772,9 @@ window.addEventListener("load", () => {
         delay: delay
       });
       
-      // Дополнительное небольшое движение по X для естественности
       gsap.to(element, {
-        x: -amplitudeX/2 + Math.random() * amplitudeX, // Меньшее движение по X
-        duration: duration * 1.5, // Другой период для асинхронности
+        x: -amplitudeX/2 + Math.random() * amplitudeX,
+        duration: duration * 1.5,
         ease: ease,
         repeat: -1,
         yoyo: true,
@@ -786,7 +783,7 @@ window.addEventListener("load", () => {
     } else {
       // Движение влево-вправо
       gsap.to(element, {
-        x: -amplitudeX + Math.random() * (amplitudeX * 2), // Случайная амплитуда в пределах диапазона
+        x: -amplitudeX + Math.random() * (amplitudeX * 2),
         duration: duration,
         ease: ease,
         repeat: -1,
@@ -796,7 +793,7 @@ window.addEventListener("load", () => {
       
       // Дополнительное небольшое движение по Y для естественности
       gsap.to(element, {
-        y: -amplitudeY/2 - Math.random() * 10, // Меньшее движение по Y
+        y: -amplitudeY/2 - Math.random() * 10,
         duration: duration * 1.3, 
         ease: ease,
         repeat: -1,
@@ -805,50 +802,42 @@ window.addEventListener("load", () => {
       });
     }
     
-    // Добавляем атрибут для запоминания, какая анимация была применена
     element.setAttribute("data-animation-type", animationType);
   }
   
   // Функция для плавного отображения шаров
   function showBalls() {
-    // Дополнительная задержка в 1 секунду перед началом показа шаров
     setTimeout(() => {
       document.querySelectorAll("[data-ball]").forEach((element, index) => {
-        // Добавляем различную задержку для каждого шара
         setTimeout(() => {
-          element.style.visibility = "visible"; // Сначала делаем элемент видимым
+          element.style.visibility = "visible";
           element.style.opacity = "1";
           
-          // Также делаем видимым canvas внутри
           const canvas = element.querySelector("canvas");
           if (canvas) {
             canvas.style.opacity = "1";
           }
-        }, index * 100); // Каждый шар появляется с задержкой относительно предыдущего
+        }, index * 100);
       });
-    }, 1000); // Увеличиваем задержку до 1 секунды
+    }, 1000);
   }
   
   // Запускаем видео и настраиваем шары
   if (sourceVideo) {
     sourceVideo.addEventListener("loadedmetadata", () => {
-      // Запускаем видео
       sourceVideo.play().catch(error => {
         console.log("Автовоспроизведение невозможно:", error);
         
-        // Если автовоспроизведение не работает, все равно настраиваем шары
         setupBalls();
         showBalls();
       });
       
-      // Настраиваем шары
       setupBalls();
       
       // Показываем шары когда видео готово
       showBalls();
     });
     
-    // Резервный вариант - если видео уже загружено
     if (sourceVideo.readyState >= 3) { // HAVE_FUTURE_DATA или HAVE_ENOUGH_DATA
       setupBalls();
       sourceVideo.play().catch(error => {
@@ -856,60 +845,47 @@ window.addEventListener("load", () => {
       });
       showBalls();
     }
-    
-    // Обеспечиваем загрузку видео
+
     sourceVideo.load();
   }
 });
 
   // Анимация контента внутри блоков при скролле
 document.addEventListener('DOMContentLoaded', function() {
-  // Проверяем, является ли устройство мобильным
   const isMobile = window.matchMedia('(max-width: 1200px)').matches;
   
-  // Выполняем код только если это не мобильное устройство
   if (!isMobile && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-    // Регистрируем плагин ScrollTrigger
     gsap.registerPlugin(ScrollTrigger);
     
-    // Определяем значение отступа в зависимости от размера экрана
     const getOffset = () => {
       return window.innerWidth <= 1024 ? 50 : 300;
     };
     
-    // Инициализация переменной отступа
     let scrollOffset = getOffset();
     
-    // Обновляем значение при изменении размера окна
     let resizeTimeout;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
-        // Проверяем, не стало ли устройство мобильным после ресайза
         const isMobileAfterResize = window.matchMedia('(max-width: 1200px)').matches;
         
-        // Если стало мобильным, удаляем все триггеры и выходим
         if (isMobileAfterResize) {
-          // Убиваем все существующие триггеры ScrollTrigger
           ScrollTrigger.getAll().forEach(trigger => trigger.kill());
           
-          // Показываем все элементы, которые могли быть скрыты
           showAllElementsOnMobile();
           return;
         }
         
-        // Если не мобильное, обновляем отступ и обновляем триггеры
+        // Если не мобильн, обновляем отступ и обновляем триггеры
         scrollOffset = getOffset();
         ScrollTrigger.refresh();
       }, 200);
     });
     
-    // Функция для показа всех элементов на мобильных
+    //  для показа на мобильных
     function showAllElementsOnMobile() {
-      // Получаем все блоки change-way__item
       const items = document.querySelectorAll('.change-way__item');
       
-      // Для каждого блока показываем контент
       items.forEach(item => {
         const content = item.querySelector('.vertical, .text-block, .horizontal, .change-way__item__row');
         if (content) {
@@ -917,25 +893,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
       
-      // Показываем кнопку в контейнере
       const btnContainer = document.querySelector('.change-way .btn-container');
       if (btnContainer) {
         gsap.set(btnContainer, { autoAlpha: 1, y: 0 });
       }
     }
     
-    // Получаем все блоки change-way__item
     const items = document.querySelectorAll('.change-way__item');
     
-    // Проверяем, что элементы существуют
     if (items.length > 0) {
-      // Для первого блока (снизу вверх)
       if (items[0]) {
-        // Сначала скрываем внутренний контент
         const firstItemContent = items[0].querySelector('.vertical, .text-block');
         gsap.set(firstItemContent, { autoAlpha: 0, y: 50 });
         
-        // Создаем анимацию для контента первого блока
         gsap.to(firstItemContent, { 
           autoAlpha: 1, 
           y: 0, 
@@ -949,16 +919,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       }
       
-      // Для второго блока (справа налево) с задержкой 0.5 секунды
       if (items.length > 1) {
-        // Сначала скрываем внутренний контент
         const secondItemContent = items[1].querySelector('.horizontal, .text-block');
         gsap.set(secondItemContent, { autoAlpha: 0, x: 50 });
         
-        // Находим список игр внутри блока
         const gamesList = items[1].querySelector('.horizontal');
-        
-        // Создаем анимацию для контента второго блока с задержкой
+      
         gsap.to(secondItemContent, { 
           autoAlpha: 1, 
           x: 0, 
@@ -971,7 +937,6 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleActions: 'play none none reverse'
           },
           onComplete: function() {
-            // Код анимации скроллинга остаётся без изменений
             if (gamesList) {
               const scrollWidth = gamesList.scrollWidth - gamesList.clientWidth;
               if (scrollWidth > 0) {
@@ -987,7 +952,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       }
       
-      // Для третьего блока (появление)
       if (items.length > 2) {
         const thirdItemContent = items[2].querySelector('.change-way__item__row');
         gsap.set(thirdItemContent, { autoAlpha: 0 });
@@ -1005,7 +969,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     
-    // Анимация кнопки в контейнере
     const btnContainer = document.querySelector('.change-way .btn-container');
     if (btnContainer) {
       gsap.set(btnContainer, { autoAlpha: 0, y: 30 });
@@ -1024,14 +987,11 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
   } else if (isMobile) {
-    // Если мобильное устройство, просто показываем все элементы
     if (typeof gsap !== 'undefined') {
-      // Функция для показа всех элементов на мобильных
+      // для показа на мобильных
       function showAllElementsOnMobile() {
-        // Получаем все блоки change-way__item
         const items = document.querySelectorAll('.change-way__item');
         
-        // Для каждого блока показываем контент
         items.forEach(item => {
           const content = item.querySelector('.vertical, .text-block, .horizontal, .change-way__item__row');
           if (content) {
@@ -1039,7 +999,7 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         });
         
-        // Показываем кнопку в контейнере
+        // Show the button in the container
         const btnContainer = document.querySelector('.change-way .btn-container');
         if (btnContainer) {
           gsap.set(btnContainer, { autoAlpha: 1, y: 0 });
@@ -1048,12 +1008,12 @@ document.addEventListener('DOMContentLoaded', function() {
       
       showAllElementsOnMobile();
       
-      // Если ScrollTrigger загружен, убиваем все триггеры
+      // If ScrollTrigger is loaded, kill all triggers
       if (typeof ScrollTrigger !== 'undefined') {
         ScrollTrigger.getAll().forEach(trigger => trigger.kill());
       }
     } else {
-      // Если gsap не загружен, просто показываем элементы через CSS
+      // If gsap is not loaded, just show the elements via CSS
       const style = document.createElement('style');
       style.textContent = `
         .change-way__item .vertical, 
@@ -1069,7 +1029,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.head.appendChild(style);
     }
   } else {
-    console.warn('GSAP или ScrollTrigger не найдены. Убедитесь, что библиотеки загружены.');
+    console.warn('GSAP or ScrollTrigger are not found. Make sure the libraries are loaded.');
   }
 });
 
