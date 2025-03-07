@@ -2044,7 +2044,6 @@ b, strong, .font-700 {
   width: 20rem;
   aspect-ratio: 1/1;
   position: absolute;
-  filter: blur(1px);
   z-index: -1;
   pointer-events: none;
   transition: all 0.2s ease-in-out;

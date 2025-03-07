@@ -514,432 +514,562 @@ window.addEventListener("load", () => {
   
   // Сначала скрываем все шары, чтобы не было видно черных пятен
   document.querySelectorAll("[data-ball]").forEach(element => {
-      element.style.opacity = "0";
-      element.style.transition = "opacity 1s ease";
-      element.style.visibility = "hidden";
+    element.style.opacity = "0";
+    element.style.transition = "opacity 1s ease";
+    element.style.visibility = "hidden";
   });
   
   // Типы анимации
   const ANIMATION_TYPES = {
-      UP_DOWN: 'up-down',
-      LEFT_RIGHT: 'left-right'
+    UP_DOWN: 'up-down',
+    LEFT_RIGHT: 'left-right'
   };
   
   // Настраиваем шары
   function setupBalls() {
-      // Найти все элементы с атрибутом data-ball
-      document.querySelectorAll("[data-ball]").forEach((element, index) => {
-          // Пропускаем слишком маленькие элементы
-          if (element.clientWidth < 5) return;
-          
-          // Создаем canvas элемент
-          const canvas = document.createElement("canvas");
-          const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
-          
-          // Если WebGL не поддерживается, пропускаем
-          if (!gl) return;
-          
-          // Настраиваем canvas
-          canvas.style.opacity = "0";
-          canvas.classList.add("transition-opacity", "duration-5000");
-          canvas.width = element.clientWidth;
-          canvas.height = element.clientWidth; // Делаем квадратным
-          
-          // Создаем обертку для canvas
-          const wrapper = document.createElement("div");
-          wrapper.style.width = "100%";
-          wrapper.style.height = "100%";
-          wrapper.style.position = "relative";
-          wrapper.appendChild(canvas);
-          
-          // Заменяем содержимое элемента оберткой
-          element.replaceChildren(wrapper);
-          element.style.overflow = "visible"; // Чтобы анимация могла выходить за границы
-          
-          // Добавляем случайный начальный поворот
-          const initialRotation = Math.floor(Math.random() * 360) - 180; // От -180 до +180 градусов
-          gsap.set(element, {
-              rotation: initialRotation,
-              transformOrigin: "center center"
-          });
-          
-          // Получаем время начала для этого шара
-          const startTime = element.hasAttribute("data-start-time") 
-              ? parseFloat(element.getAttribute("data-start-time"))
-              : Math.random() * 10; // Случайное время, если не указано
-              
-          // Сохраняем смещение времени
-          canvas.timeOffset = startTime;
-          
-          // Устанавливаем текущее время видео для этого шара
-          if (sourceVideo.readyState >= 2) {
-              sourceVideo.currentTime = startTime % sourceVideo.duration;
-          }
-          
-          // Создаем WebGL текстуру
-          const texture = gl.createTexture();
-          gl.bindTexture(gl.TEXTURE_2D, texture);
-          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-          
-          // Создаем вершинный шейдер
-          const vertexShaderSource = `
-              attribute vec2 a_position;
-              attribute vec2 a_texCoord;
-              varying vec2 v_texCoord;
-              void main() {
-                  gl_Position = vec4(a_position, 0.0, 1.0);
-                  v_texCoord = a_texCoord;
-              }
-          `;
-          const vertexShader = gl.createShader(gl.VERTEX_SHADER);
-          gl.shaderSource(vertexShader, vertexShaderSource);
-          gl.compileShader(vertexShader);
-          
-          // Создаем фрагментный шейдер (для создания круглой формы)
-          const fragmentShaderSource = `
-              precision highp float;
-              varying vec2 v_texCoord;
-              uniform sampler2D u_texture;
-              uniform float u_padding;
-              void main() {
-                  vec2 centeredCoord = v_texCoord * 2.0 - 1.0; // Convert to -1..1
-                  float radius = 1.0 + u_padding; // Make the circle wider
-                  
-                  if (dot(centeredCoord, centeredCoord) > radius * radius) discard; // Cut out the circle
-                  
-                  gl_FragColor = texture2D(u_texture, v_texCoord);
-              }
-          `;
-          const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-          gl.shaderSource(fragmentShader, fragmentShaderSource);
-          gl.compileShader(fragmentShader);
-          
-          // Создаем и связываем шейдерную программу
-          const program = gl.createProgram();
-          gl.attachShader(program, vertexShader);
-          gl.attachShader(program, fragmentShader);
-          gl.linkProgram(program);
-          gl.useProgram(program);
-          
-          // Создаем буфер для прямоугольника, который покажет текстуру
-          const positionBuffer = gl.createBuffer();
-          const positions = new Float32Array([
-              -1, -1,  0, 0,  // bottom left
-              1, -1,  1, 0,  // bottom right
-              -1,  1,  0, 1,  // top left
-              1,  1,  1, 1   // top right
-          ]);
-          gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-          gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-          
-          // Настраиваем атрибут положения
-          const positionLocation = gl.getAttribLocation(program, "a_position");
-          gl.enableVertexAttribArray(positionLocation);
-          gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 16, 0);
-          
-          // Настраиваем атрибут текстурных координат
-          const texCoordLocation = gl.getAttribLocation(program, "a_texCoord");
-          gl.enableVertexAttribArray(texCoordLocation);
-          gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 16, 8);
-          
-          // Устанавливаем uniform для отступа (для края круга)
-          const paddingLocation = gl.getUniformLocation(program, "u_padding");
-          gl.uniform1f(paddingLocation, -3 / canvas.width);
-          
-          // Включаем фильтрацию текстур для лучшего качества
-          const ext = gl.getExtension("EXT_texture_filter_anisotropic");
-          if (ext) {
-              const max = gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
-              gl.texParameterf(gl.TEXTURE_2D, ext.TEXTURE_MAX_ANISOTROPY_EXT, max);
-          }
-          
-          // Функция анимации для обновления canvas с кадрами видео
-          function render() {
-              if (!gl) return;
-              
-              gl.bindTexture(gl.TEXTURE_2D, texture);
-              gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sourceVideo);
-              
-              gl.clear(gl.COLOR_BUFFER_BIT);
-              gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-              
-              requestAnimationFrame(render);
-          }
-          
-          // Обработка изменения размера
-          function handleResize() {
-              if (!gl) return;
-              
-              canvas.width = element.clientWidth;
-              canvas.height = element.clientWidth;
-              gl.viewport(0, 0, canvas.width, canvas.height);
-              
-              // Обновляем padding для круга
-              gl.uniform1f(paddingLocation, -3 / canvas.width);
-          }
-          
-          window.addEventListener("resize", handleResize);
-          handleResize();
-          render();
-          canvas.style.opacity = "1";
-          
-          // Применяем GSAP анимации
-          applyAnimation(element, index);
+    // Найти все элементы с атрибутом data-ball
+    document.querySelectorAll("[data-ball]").forEach((element, index) => {
+      // Пропускаем слишком маленькие элементы
+      if (element.clientWidth < 5) return;
+      
+      // Создаем canvas элемент с высоким DPI для лучшего качества
+      const canvas = document.createElement("canvas");
+      const pixelRatio = window.devicePixelRatio || 1;
+      
+      const gl = canvas.getContext("webgl2", {
+        antialias: true,
+        alpha: true
+      }) || canvas.getContext("webgl", {
+        antialias: true,
+        alpha: true
       });
+      
+      // Если WebGL не поддерживается, пропускаем
+      if (!gl) return;
+      
+      // Настраиваем canvas с учетом pixelRatio для лучшего качества
+      canvas.style.opacity = "0";
+      canvas.style.width = "100%";
+      canvas.style.height = "100%";
+      canvas.classList.add("transition-opacity", "duration-5000");
+      
+      // Устанавливаем размер canvas с учетом pixel ratio для четкости
+      const size = element.clientWidth;
+      canvas.width = size * pixelRatio;
+      canvas.height = size * pixelRatio;
+      
+      // Создаем обертку для canvas
+      const wrapper = document.createElement("div");
+      wrapper.style.width = "100%";
+      wrapper.style.height = "100%";
+      wrapper.style.position = "relative";
+      wrapper.appendChild(canvas);
+      
+      // Заменяем содержимое элемента оберткой
+      element.replaceChildren(wrapper);
+      element.style.overflow = "visible"; // Чтобы анимация могла выходить за границы
+      
+      // Добавляем случайный начальный поворот
+      const initialRotation = Math.floor(Math.random() * 360) - 180; // От -180 до +180 градусов
+      gsap.set(element, {
+        rotation: initialRotation,
+        transformOrigin: "center center"
+      });
+      
+      // Получаем время начала для этого шара
+      const startTime = element.hasAttribute("data-start-time") 
+        ? parseFloat(element.getAttribute("data-start-time"))
+        : Math.random() * 10; // Случайное время, если не указано
+          
+      // Сохраняем смещение времени
+      canvas.timeOffset = startTime;
+      
+      // Устанавливаем текущее время видео для этого шара
+      if (sourceVideo && sourceVideo.readyState >= 2) {
+        sourceVideo.currentTime = startTime % sourceVideo.duration;
+      }
+      
+      // Создаем WebGL текстуру с улучшенными параметрами
+      const texture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      
+      // Создаем вершинный шейдер
+      const vertexShaderSource = `
+        precision highp float;
+        attribute vec2 a_position;
+        attribute vec2 a_texCoord;
+        varying vec2 v_texCoord;
+        void main() {
+          gl_Position = vec4(a_position, 0.0, 1.0);
+          v_texCoord = a_texCoord;
+        }
+      `;
+      const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+      gl.shaderSource(vertexShader, vertexShaderSource);
+      gl.compileShader(vertexShader);
+      
+      // Создаем улучшенный фрагментный шейдер для более гладкого круга
+      const fragmentShaderSource = `
+        precision highp float;
+        varying vec2 v_texCoord;
+        uniform sampler2D u_texture;
+        uniform float u_padding;
+        
+        void main() {
+          vec2 centeredCoord = v_texCoord * 2.0 - 1.0; // Convert to -1..1
+          float radius = 1.0 + u_padding; // Make the circle wider
+          
+          // Улучшенная гладкость краев с антиалиасингом
+          float distFromCenter = length(centeredCoord);
+          float smoothEdge = 0.01;
+          float alpha = 1.0 - smoothstep(radius - smoothEdge, radius, distFromCenter);
+          
+          if (alpha <= 0.0) discard; // Cut out the circle
+          
+          vec4 color = texture2D(u_texture, v_texCoord);
+          gl_FragColor = vec4(color.rgb, color.a * alpha);
+        }
+      `;
+      const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+      gl.shaderSource(fragmentShader, fragmentShaderSource);
+      gl.compileShader(fragmentShader);
+      
+      // Проверка на ошибки компиляции шейдеров
+      if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+        console.error('Ошибка вершинного шейдера:', gl.getShaderInfoLog(vertexShader));
+        return;
+      }
+      
+      if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+        console.error('Ошибка фрагментного шейдера:', gl.getShaderInfoLog(fragmentShader));
+        return;
+      }
+      
+      // Создаем и связываем шейдерную программу
+      const program = gl.createProgram();
+      gl.attachShader(program, vertexShader);
+      gl.attachShader(program, fragmentShader);
+      gl.linkProgram(program);
+      
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error('Ошибка линковки программы:', gl.getProgramInfoLog(program));
+        return;
+      }
+      
+      gl.useProgram(program);
+      
+      // Масштабируем viewport с учетом pixel ratio
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      
+      // Создаем буфер для прямоугольника, который покажет текстуру
+      const positionBuffer = gl.createBuffer();
+      const positions = new Float32Array([
+        -1, -1,  0, 0,  // bottom left
+        1, -1,  1, 0,  // bottom right
+        -1,  1,  0, 1,  // top left
+        1,  1,  1, 1   // top right
+      ]);
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+      
+      // Настраиваем атрибут положения
+      const positionLocation = gl.getAttribLocation(program, "a_position");
+      gl.enableVertexAttribArray(positionLocation);
+      gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 16, 0);
+      
+      // Настраиваем атрибут текстурных координат
+      const texCoordLocation = gl.getAttribLocation(program, "a_texCoord");
+      gl.enableVertexAttribArray(texCoordLocation);
+      gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 16, 8);
+      
+      // Устанавливаем uniform для отступа (для края круга)
+      const paddingLocation = gl.getUniformLocation(program, "u_padding");
+      gl.uniform1f(paddingLocation, -0.02); // Улучшенный параметр для более гладких краев
+      
+      // Включаем расширенную фильтрацию текстур для лучшего качества
+      const ext = gl.getExtension("EXT_texture_filter_anisotropic");
+      if (ext) {
+        const max = gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+        gl.texParameterf(gl.TEXTURE_2D, ext.TEXTURE_MAX_ANISOTROPY_EXT, max);
+      }
+      
+      // Включаем смешивание для создания прозрачных краев
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      
+      // Функция анимации для обновления canvas с кадрами видео
+      function render() {
+        if (!gl) return;
+        
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sourceVideo);
+        
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        
+        requestAnimationFrame(render);
+      }
+      
+      // Обработка изменения размера
+      function handleResize() {
+        if (!gl) return;
+        
+        const newSize = element.clientWidth;
+        canvas.width = newSize * pixelRatio;
+        canvas.height = newSize * pixelRatio;
+        
+        gl.viewport(0, 0, canvas.width, canvas.height);
+      }
+      
+      window.addEventListener("resize", handleResize);
+      handleResize();
+      render();
+      canvas.style.opacity = "1";
+      
+      // Применяем GSAP анимации
+      applyAnimation(element, index);
+    });
   }
   
   // Функция для применения анимации к шару
   function applyAnimation(element, index) {
-      // Определяем параметры анимации в зависимости от размера экрана
-      const isMobile = window.innerWidth < 1200;
+    // Определяем параметры анимации в зависимости от размера экрана
+    const isMobile = window.innerWidth < 1200;
+    
+    // Случайные параметры анимации
+    let duration, amplitudeX, amplitudeY;
+    
+    if (isMobile) {
+      // Более короткие и мелкие движения для мобильных
+      duration = 3 + Math.random() * 2; // 3-5 секунд
+      amplitudeX = 15; // Меньшая амплитуда для мобильных
+      amplitudeY = 20;
+    } else {
+      // Более длинные и заметные движения для десктопа
+      duration = 5 + Math.random() * 5; // 5-10 секунд
+      amplitudeX = 25; // Большая амплитуда для десктопа
+      amplitudeY = 40;
+    }
+    
+    const delay = Math.random() * 3; // 0-3 секунды задержки
+    const ease = "sine.inOut"; // Плавное ускорение/замедление
+    
+    // Выбираем тип анимации
+    const animationTypes = Object.values(ANIMATION_TYPES);
+    const animationType = animationTypes[index % animationTypes.length]; // Распределяем анимации между шарами
+    
+    // Применяем анимацию в зависимости от типа
+    if (animationType === ANIMATION_TYPES.UP_DOWN) {
+      // Движение вверх-вниз
+      gsap.to(element, {
+        y: -amplitudeY - Math.random() * 10, // Случайная амплитуда в пределах диапазона
+        duration: duration,
+        ease: ease,
+        repeat: -1,
+        yoyo: true,
+        delay: delay
+      });
       
-      // Случайные параметры анимации
-      let duration, amplitudeX, amplitudeY;
+      // Дополнительное небольшое движение по X для естественности
+      gsap.to(element, {
+        x: -amplitudeX/2 + Math.random() * amplitudeX, // Меньшее движение по X
+        duration: duration * 1.5, // Другой период для асинхронности
+        ease: ease,
+        repeat: -1,
+        yoyo: true,
+        delay: delay + 0.5
+      });
+    } else {
+      // Движение влево-вправо
+      gsap.to(element, {
+        x: -amplitudeX + Math.random() * (amplitudeX * 2), // Случайная амплитуда в пределах диапазона
+        duration: duration,
+        ease: ease,
+        repeat: -1,
+        yoyo: true,
+        delay: delay
+      });
       
-      if (isMobile) {
-          // Более короткие и мелкие движения для мобильных
-          duration = 3 + Math.random() * 2; // 3-5 секунд
-          amplitudeX = 15; // Меньшая амплитуда для мобильных
-          amplitudeY = 20;
-      } else {
-          // Более длинные и заметные движения для десктопа
-          duration = 5 + Math.random() * 5; // 5-10 секунд
-          amplitudeX = 25; // Большая амплитуда для десктопа
-          amplitudeY = 40;
-      }
-      
-      const delay = Math.random() * 3; // 0-3 секунды задержки
-      const ease = "sine.inOut"; // Плавное ускорение/замедление
-      
-      // Выбираем тип анимации
-      const animationTypes = Object.values(ANIMATION_TYPES);
-      const animationType = animationTypes[index % animationTypes.length]; // Распределяем анимации между шарами
-      
-      // Применяем анимацию в зависимости от типа
-      if (animationType === ANIMATION_TYPES.UP_DOWN) {
-          // Движение вверх-вниз
-          gsap.to(element, {
-              y: -amplitudeY - Math.random() * 10, // Случайная амплитуда в пределах диапазона
-              duration: duration,
-              ease: ease,
-              repeat: -1,
-              yoyo: true,
-              delay: delay
-          });
-          
-          // Дополнительное небольшое движение по X для естественности
-          gsap.to(element, {
-              x: -amplitudeX/2 + Math.random() * amplitudeX, // Меньшее движение по X
-              duration: duration * 1.5, // Другой период для асинхронности
-              ease: ease,
-              repeat: -1,
-              yoyo: true,
-              delay: delay + 0.5
-          });
-      } else {
-          // Движение влево-вправо
-          gsap.to(element, {
-              x: -amplitudeX + Math.random() * (amplitudeX * 2), // Случайная амплитуда в пределах диапазона
-              duration: duration,
-              ease: ease,
-              repeat: -1,
-              yoyo: true,
-              delay: delay
-          });
-          
-          // Дополнительное небольшое движение по Y для естественности
-          gsap.to(element, {
-              y: -amplitudeY/2 - Math.random() * 10, // Меньшее движение по Y
-              duration: duration * 1.3, 
-              ease: ease,
-              repeat: -1,
-              yoyo: true,
-              delay: delay + 0.7
-          });
-      }
-      
-      // Добавляем атрибут для запоминания, какая анимация была применена
-      element.setAttribute("data-animation-type", animationType);
+      // Дополнительное небольшое движение по Y для естественности
+      gsap.to(element, {
+        y: -amplitudeY/2 - Math.random() * 10, // Меньшее движение по Y
+        duration: duration * 1.3, 
+        ease: ease,
+        repeat: -1,
+        yoyo: true,
+        delay: delay + 0.7
+      });
+    }
+    
+    // Добавляем атрибут для запоминания, какая анимация была применена
+    element.setAttribute("data-animation-type", animationType);
   }
   
   // Функция для плавного отображения шаров
   function showBalls() {
-      // Дополнительная задержка в 1 секунду перед началом показа шаров
-      setTimeout(() => {
-          document.querySelectorAll("[data-ball]").forEach((element, index) => {
-              // Добавляем различную задержку для каждого шара
-              setTimeout(() => {
-                  element.style.visibility = "visible"; // Сначала делаем элемент видимым
-                  element.style.opacity = "1";
-                  
-                  // Также делаем видимым canvas внутри
-                  const canvas = element.querySelector("canvas");
-                  if (canvas) {
-                      canvas.style.opacity = "1";
-                  }
-              }, index * 100); // Каждый шар появляется с задержкой относительно предыдущего
-          });
-      }, 1000); // Увеличиваем задержку до 1 секунды
+    // Дополнительная задержка в 1 секунду перед началом показа шаров
+    setTimeout(() => {
+      document.querySelectorAll("[data-ball]").forEach((element, index) => {
+        // Добавляем различную задержку для каждого шара
+        setTimeout(() => {
+          element.style.visibility = "visible"; // Сначала делаем элемент видимым
+          element.style.opacity = "1";
+          
+          // Также делаем видимым canvas внутри
+          const canvas = element.querySelector("canvas");
+          if (canvas) {
+            canvas.style.opacity = "1";
+          }
+        }, index * 100); // Каждый шар появляется с задержкой относительно предыдущего
+      });
+    }, 1000); // Увеличиваем задержку до 1 секунды
   }
   
   // Запускаем видео и настраиваем шары
   if (sourceVideo) {
-      sourceVideo.addEventListener("loadedmetadata", () => {
-          // Запускаем видео
-          sourceVideo.play().catch(error => {
-              console.log("Автовоспроизведение невозможно:", error);
-              
-              // Если автовоспроизведение не работает, все равно настраиваем шары
-              setupBalls();
-              showBalls();
-          });
-          
-          // Настраиваем шары
-          setupBalls();
-          
-          // Показываем шары когда видео готово
-          showBalls();
+    sourceVideo.addEventListener("loadedmetadata", () => {
+      // Запускаем видео
+      sourceVideo.play().catch(error => {
+        console.log("Автовоспроизведение невозможно:", error);
+        
+        // Если автовоспроизведение не работает, все равно настраиваем шары
+        setupBalls();
+        showBalls();
       });
       
-      // Резервный вариант - если видео уже загружено
-      if (sourceVideo.readyState >= 3) { // HAVE_FUTURE_DATA или HAVE_ENOUGH_DATA
-          setupBalls();
-          sourceVideo.play().catch(error => {
-              console.log("Автовоспроизведение невозможно:", error);
-          });
-          showBalls();
-      }
+      // Настраиваем шары
+      setupBalls();
       
-      // Обеспечиваем загрузку видео
-      sourceVideo.load();
+      // Показываем шары когда видео готово
+      showBalls();
+    });
+    
+    // Резервный вариант - если видео уже загружено
+    if (sourceVideo.readyState >= 3) { // HAVE_FUTURE_DATA или HAVE_ENOUGH_DATA
+      setupBalls();
+      sourceVideo.play().catch(error => {
+        console.log("Автовоспроизведение невозможно:", error);
+      });
+      showBalls();
+    }
+    
+    // Обеспечиваем загрузку видео
+    sourceVideo.load();
   }
 });
 
   // Анимация контента внутри блоков при скролле
 document.addEventListener('DOMContentLoaded', function() {
-    // Проверяем, что GSAP и ScrollTrigger загружены
-    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-      // Регистрируем плагин ScrollTrigger
-      gsap.registerPlugin(ScrollTrigger);
-      
-      // Определяем значение отступа в зависимости от размера экрана
-      const getOffset = () => {
-        return window.innerWidth <= 1024 ? 50 : 300;
-      };
-      
-      // Инициализация переменной отступа
-      let scrollOffset = getOffset();
-      
-      // Обновляем значение при изменении размера окна
-      window.addEventListener('resize', () => {
+  // Проверяем, является ли устройство мобильным
+  const isMobile = window.matchMedia('(max-width: 1200px)').matches;
+  
+  // Выполняем код только если это не мобильное устройство
+  if (!isMobile && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    // Регистрируем плагин ScrollTrigger
+    gsap.registerPlugin(ScrollTrigger);
+    
+    // Определяем значение отступа в зависимости от размера экрана
+    const getOffset = () => {
+      return window.innerWidth <= 1024 ? 50 : 300;
+    };
+    
+    // Инициализация переменной отступа
+    let scrollOffset = getOffset();
+    
+    // Обновляем значение при изменении размера окна
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        // Проверяем, не стало ли устройство мобильным после ресайза
+        const isMobileAfterResize = window.matchMedia('(max-width: 1200px)').matches;
+        
+        // Если стало мобильным, удаляем все триггеры и выходим
+        if (isMobileAfterResize) {
+          // Убиваем все существующие триггеры ScrollTrigger
+          ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+          
+          // Показываем все элементы, которые могли быть скрыты
+          showAllElementsOnMobile();
+          return;
+        }
+        
+        // Если не мобильное, обновляем отступ и обновляем триггеры
         scrollOffset = getOffset();
-        // Обновляем все экземпляры ScrollTrigger
         ScrollTrigger.refresh();
-      });
-      
+      }, 200);
+    });
+    
+    // Функция для показа всех элементов на мобильных
+    function showAllElementsOnMobile() {
       // Получаем все блоки change-way__item
       const items = document.querySelectorAll('.change-way__item');
       
-      // Проверяем, что элементы существуют
-      if (items.length > 0) {
-        // Для первого блока (снизу вверх)
-        if (items[0]) {
-          // Сначала скрываем внутренний контент
-          const firstItemContent = items[0].querySelector('.vertical, .text-block');
-          gsap.set(firstItemContent, { autoAlpha: 0, y: 50 });
-          
-          // Создаем анимацию для контента первого блока
-          gsap.to(firstItemContent, { 
-            autoAlpha: 1, 
-            y: 0, 
-            duration: 0.8, 
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: items[0],
-              start: () => `top bottom-=${scrollOffset}`,
-              toggleActions: 'play none none reverse'
-            }
-          });
+      // Для каждого блока показываем контент
+      items.forEach(item => {
+        const content = item.querySelector('.vertical, .text-block, .horizontal, .change-way__item__row');
+        if (content) {
+          gsap.set(content, { autoAlpha: 1, y: 0, x: 0 });
         }
-        
-        // Для второго блока (справа налево) с задержкой 0.5 секунды
-        if (items.length > 1) {
-          // Сначала скрываем внутренний контент
-          const secondItemContent = items[1].querySelector('.horizontal, .text-block');
-          gsap.set(secondItemContent, { autoAlpha: 0, x: 50 });
-          
-          // Находим список игр внутри блока
-          const gamesList = items[1].querySelector('.horizontal');
-          
-          // Создаем анимацию для контента второго блока с задержкой
-          gsap.to(secondItemContent, { 
-            autoAlpha: 1, 
-            x: 0, 
-            duration: 0.8, 
-            delay: 0.5,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: items[1],
-              start: () => `top bottom-=${scrollOffset}`,
-              toggleActions: 'play none none reverse'
-            },
-            onComplete: function() {
-              // Код анимации скроллинга остаётся без изменений
-              if (gamesList) {
-                const scrollWidth = gamesList.scrollWidth - gamesList.clientWidth;
-                if (scrollWidth > 0) {
-                  gsap.to(gamesList, {
-                    scrollLeft: scrollWidth,
-                    duration: 4,
-                    ease: "power1.out",
-                    delay: 0.3
-                  });
-                }
-              }
-            }
-          });
-        }
-        
-        // Для третьего блока (появление)
-        if (items.length > 2) {
-          const thirdItemContent = items[2].querySelector('.change-way__item__row');
-          gsap.set(thirdItemContent, { autoAlpha: 0 });
-          
-          gsap.to(thirdItemContent, { 
-            autoAlpha: 1, 
-            duration: 1, 
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: items[2],
-              start: () => `top bottom-=${scrollOffset}`,
-              toggleActions: 'play none none reverse'
-            }
-          });
-        }
-      }
+      });
       
-      // Анимация кнопки в контейнере
+      // Показываем кнопку в контейнере
       const btnContainer = document.querySelector('.change-way .btn-container');
       if (btnContainer) {
-        gsap.set(btnContainer, { autoAlpha: 0, y: 30 });
+        gsap.set(btnContainer, { autoAlpha: 1, y: 0 });
+      }
+    }
+    
+    // Получаем все блоки change-way__item
+    const items = document.querySelectorAll('.change-way__item');
+    
+    // Проверяем, что элементы существуют
+    if (items.length > 0) {
+      // Для первого блока (снизу вверх)
+      if (items[0]) {
+        // Сначала скрываем внутренний контент
+        const firstItemContent = items[0].querySelector('.vertical, .text-block');
+        gsap.set(firstItemContent, { autoAlpha: 0, y: 50 });
         
-        gsap.to(btnContainer, { 
+        // Создаем анимацию для контента первого блока
+        gsap.to(firstItemContent, { 
           autoAlpha: 1, 
           y: 0, 
           duration: 0.8, 
-          delay: 0.4,
           ease: 'power2.out',
           scrollTrigger: {
-            trigger: btnContainer,
-            start: () => `top bottom-=${scrollOffset > 250 ? 250 : scrollOffset}`,
+            trigger: items[0],
+            start: () => `top bottom-=${scrollOffset}`,
             toggleActions: 'play none none reverse'
           }
         });
       }
-    } else {
-      console.warn('GSAP или ScrollTrigger не найдены. Убедитесь, что библиотеки загружены.');
+      
+      // Для второго блока (справа налево) с задержкой 0.5 секунды
+      if (items.length > 1) {
+        // Сначала скрываем внутренний контент
+        const secondItemContent = items[1].querySelector('.horizontal, .text-block');
+        gsap.set(secondItemContent, { autoAlpha: 0, x: 50 });
+        
+        // Находим список игр внутри блока
+        const gamesList = items[1].querySelector('.horizontal');
+        
+        // Создаем анимацию для контента второго блока с задержкой
+        gsap.to(secondItemContent, { 
+          autoAlpha: 1, 
+          x: 0, 
+          duration: 0.8, 
+          delay: 0.5,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: items[1],
+            start: () => `top bottom-=${scrollOffset}`,
+            toggleActions: 'play none none reverse'
+          },
+          onComplete: function() {
+            // Код анимации скроллинга остаётся без изменений
+            if (gamesList) {
+              const scrollWidth = gamesList.scrollWidth - gamesList.clientWidth;
+              if (scrollWidth > 0) {
+                gsap.to(gamesList, {
+                  scrollLeft: scrollWidth,
+                  duration: 4,
+                  ease: "power1.out",
+                  delay: 0.3
+                });
+              }
+            }
+          }
+        });
+      }
+      
+      // Для третьего блока (появление)
+      if (items.length > 2) {
+        const thirdItemContent = items[2].querySelector('.change-way__item__row');
+        gsap.set(thirdItemContent, { autoAlpha: 0 });
+        
+        gsap.to(thirdItemContent, { 
+          autoAlpha: 1, 
+          duration: 1, 
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: items[2],
+            start: () => `top bottom-=${scrollOffset}`,
+            toggleActions: 'play none none reverse'
+          }
+        });
+      }
     }
-  });
+    
+    // Анимация кнопки в контейнере
+    const btnContainer = document.querySelector('.change-way .btn-container');
+    if (btnContainer) {
+      gsap.set(btnContainer, { autoAlpha: 0, y: 30 });
+      
+      gsap.to(btnContainer, { 
+        autoAlpha: 1, 
+        y: 0, 
+        duration: 0.8, 
+        delay: 0.4,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: btnContainer,
+          start: () => `top bottom-=${scrollOffset > 250 ? 250 : scrollOffset}`,
+          toggleActions: 'play none none reverse'
+        }
+      });
+    }
+  } else if (isMobile) {
+    // Если мобильное устройство, просто показываем все элементы
+    if (typeof gsap !== 'undefined') {
+      // Функция для показа всех элементов на мобильных
+      function showAllElementsOnMobile() {
+        // Получаем все блоки change-way__item
+        const items = document.querySelectorAll('.change-way__item');
+        
+        // Для каждого блока показываем контент
+        items.forEach(item => {
+          const content = item.querySelector('.vertical, .text-block, .horizontal, .change-way__item__row');
+          if (content) {
+            gsap.set(content, { autoAlpha: 1, y: 0, x: 0 });
+          }
+        });
+        
+        // Показываем кнопку в контейнере
+        const btnContainer = document.querySelector('.change-way .btn-container');
+        if (btnContainer) {
+          gsap.set(btnContainer, { autoAlpha: 1, y: 0 });
+        }
+      }
+      
+      showAllElementsOnMobile();
+      
+      // Если ScrollTrigger загружен, убиваем все триггеры
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      }
+    } else {
+      // Если gsap не загружен, просто показываем элементы через CSS
+      const style = document.createElement('style');
+      style.textContent = `
+        .change-way__item .vertical, 
+        .change-way__item .text-block, 
+        .change-way__item .horizontal, 
+        .change-way__item .change-way__item__row,
+        .change-way .btn-container {
+          opacity: 1 !important;
+          visibility: visible !important;
+          transform: none !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  } else {
+    console.warn('GSAP или ScrollTrigger не найдены. Убедитесь, что библиотеки загружены.');
+  }
+});
 
