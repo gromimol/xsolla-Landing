@@ -42,6 +42,12 @@
             position: relative;
             top: 4rem;
             animation: floatingChest 6s ease-in-out infinite;
+            width: 100%;
+            height: auto;
+        }
+        img {
+            width: 100%;
+            height: auto;
         }
         .shadow {
             animation: shadowScale 6s ease-in-out infinite;

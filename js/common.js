@@ -34,29 +34,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const svg = document.querySelector('.floating-svg');
     const container = document.querySelector('.redeem');
     
-    // Явно задаем размер блока независимо от размера SVG
-    const containerWidth = container.offsetWidth;
-    const containerHeight = container.offsetHeight;
-    container.style.width = containerWidth + 'px';
-    container.style.height = containerHeight + 'px';
-    
-    // Убеждаемся, что SVG не пересекает границы контейнера
-    const svgBounds = svg.getBoundingClientRect();
-    const maxX = container.clientWidth - svgBounds.width;
-    const maxY = container.clientHeight - svgBounds.height;
-    
-    // Если нужна более случайная анимация, можно раскомментировать этот код
-
-    function moveRandomly() {
-        const randomX = Math.min(Math.random() * maxX, maxX);
-        const randomY = Math.min(Math.random() * maxY, maxY);
-        const randomRotate = Math.random() * 10 - 5;
-        
-        svg.style.transition = 'transform 10s ease-in-out';
-        svg.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${randomRotate}deg)`;
-        
-        setTimeout(moveRandomly, 10000);
-    }
+    // Проверяем, что оба элемента существуют, прежде чем работать с ними
+    if (svg && container) {
+      // Явно задаем размер блока независимо от размера SVG
+      const containerWidth = container.offsetWidth;
+      const containerHeight = container.offsetHeight;
+      container.style.width = containerWidth + 'px';
+      container.style.height = containerHeight + 'px';
+      
+      // Убеждаемся, что SVG не пересекает границы контейнера
+      const svgBounds = svg.getBoundingClientRect();
+      const maxX = container.clientWidth - svgBounds.width;
+      const maxY = container.clientHeight - svgBounds.height;
+      
+      // Если нужна более случайная анимация, можно раскомментировать этот код
+      function moveRandomly() {
+          const randomX = Math.min(Math.random() * maxX, maxX);
+          const randomY = Math.min(Math.random() * maxY, maxY);
+          const randomRotate = Math.random() * 10 - 5;
+          
+          svg.style.transition = 'transform 10s ease-in-out';
+          svg.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${randomRotate}deg)`;
+          
+          setTimeout(moveRandomly, 10000);
+      }
+  }
 });
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -464,9 +466,13 @@ document.addEventListener('DOMContentLoaded', function() {
     createTriggers();
     
     // И обновляем при изменении размера окна
-    window.addEventListener('resize', gsap.debounce(() => {
-      createTriggers();
-    }, 200));
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        createTriggers();
+      }, 200);
+    });
     
     // Дополнительный MutationObserver для отслеживания изменений
     const observer = new MutationObserver(gsap.debounce(() => {

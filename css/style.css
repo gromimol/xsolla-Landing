@@ -654,6 +654,12 @@ b, strong, .font-700 {
   position: relative;
   top: 4rem;
   animation: floatingChest 6s ease-in-out infinite;
+  width: 100%;
+  height: auto;
+}
+.first-screen__right img {
+  width: 100%;
+  height: auto;
 }
 .first-screen__right .shadow {
   animation: shadowScale 6s ease-in-out infinite;

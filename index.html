@@ -95,8 +95,14 @@
                     </div>
                     <div class="first-screen__right">
                         <picture>
-                            <source srcset="img/webp/main-box.webp" type="image/webp">
-                            <img src="img/main_box.png" alt="" />
+                            <source media="(min-width: 768px)" srcset="img/webp/main-box.webp" type="image/webp">
+                            <source media="(min-width: 768px)" srcset="img/main_box.png" type="image/png">
+                            
+                            <source media="(max-width: 767px)" srcset="img/webp/main-box_mobile.webp" type="image/webp">
+                            <source media="(max-width: 767px)" srcset="img/main_box_mobile.png" type="image/png">
+                            
+                            <!-- Запасной вариант, если браузер не поддерживает тег picture -->
+                            <img src="img/main_box.png" alt="" width="600" height="400" />
                         </picture>
                         <svg class="shadow" width="496" height="136" viewBox="0 0 496 136" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g filter="url(#filter0_f_3160_5901)">
