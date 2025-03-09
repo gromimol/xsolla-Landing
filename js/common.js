@@ -360,7 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
     gsap.registerPlugin(ScrollTrigger);
     
     // Создаем последовательность секций
-    const sections = ['.earn', '.reedem', '.last-screen'];
+    const sections = ['.earn', '.reedem'];
     
     // Функция для проверки переполнения контента в секции
     function isContentOverflow(section) {
@@ -760,11 +760,11 @@ window.addEventListener("load", () => {
     
     // Выбираем тип анимации
     const animationTypes = Object.values(ANIMATION_TYPES);
-    const animationType = animationTypes[index % animationTypes.length];
+    const animationType = animationTypes[index % animationTypes.length]; // Распределяем анимации между шарами
     
     if (animationType === ANIMATION_TYPES.UP_DOWN) {
       gsap.to(element, {
-        y: -amplitudeY - Math.random() * 10,
+        y: -amplitudeY - Math.random() * 10, // Случайная амплитуда в пределах диапазона
         duration: duration,
         ease: ease,
         repeat: -1,
