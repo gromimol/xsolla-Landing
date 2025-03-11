@@ -2570,7 +2570,7 @@ b, strong, .font-700 {
     font-size: 12px;
   }
   .change-way__item .btns-container {
-    margin-bottom: 60px;
+    margin-bottom: 40px;
   }
   .change-way .btn-container {
     margin-top: 60px;
@@ -2646,14 +2646,17 @@ b, strong, .font-700 {
     gap: 20px;
   }
   .first-screen__right {
-    max-width: 240px;
-    margin: 0 auto;
+    max-width: 300px;
+    margin: 0 auto 70px;
   }
   .first-screen__right .shadow {
     max-height: 50px;
   }
   .earn__card .description .title {
     margin-bottom: 0;
+  }
+  .last-screen {
+    border-radius: 12px 12px 0 0;
   }
 }
 @media (max-width: 640px) {
@@ -2682,9 +2685,9 @@ b, strong, .font-700 {
     animation: unset;
   }
   .ball--cat {
-    width: 70px;
-    top: -175px;
-    left: -20px;
+    width: 100px;
+    top: -203px;
+    left: -37px;
   }
   .ball--1 {
     width: 7vw;
@@ -2710,22 +2713,33 @@ b, strong, .font-700 {
     z-index: 1;
   }
   .ball--5 {
-    right: 40vw;
+    right: 16vw;
+    width: 70px;
     z-index: 1;
   }
   .ball--6 {
     width: 11vw;
-    left: 1%;
+    left: 15%;
+    bottom: 5%;
+    z-index: 1;
   }
   .ball--7 {
     bottom: 0;
-    left: 30vw;
+    left: auto;
+    bottom: -4%;
+    width: 30vw;
+    right: calc(100% - 10vw);
+  }
+  .ball--9 {
+    bottom: -3%;
+    left: calc(100% - 20vw);
+    z-index: 1;
   }
   .ball--10 {
     width: 21rem;
-    right: 0;
+    right: -10rem;
     bottom: 2vw;
-    filter: blur(7px);
+    filter: blur(4px);
   }
   .ball--12 {
     right: auto;
@@ -2738,6 +2752,12 @@ b, strong, .font-700 {
     left: 18vw;
     filter: blur(3px);
   }
+  .ball--14 {
+    width: 40vw;
+    top: -16%;
+    left: calc(100% - 23vw);
+    z-index: 1;
+  }
   .ball--15 {
     width: 15vw;
     top: -10%;
@@ -2749,8 +2769,21 @@ b, strong, .font-700 {
     right: -9rem;
     top: 30rem;
   }
+  .change-way__item {
+    background: #292731;
+    padding: 45px;
+  }
+  .bonus-list__item {
+    margin-bottom: 12px;
+  }
+  .games-list {
+    gap: 18px;
+  }
+  .change-way__item .text-block {
+    margin-top: 30px;
+  }
 }
-@media (max-width: 375px) {
+@media (max-width: 370px) {
   .first-screen .btn-container,
   .reedem .btns-container {
     flex-direction: column;
