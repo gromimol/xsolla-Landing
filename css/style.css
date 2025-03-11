@@ -613,7 +613,6 @@ b, strong, .font-700 {
   position: absolute;
   top: 0;
   right: 0;
-  filter: blur(90px);
   z-index: -2;
   opacity: 0;
   animation-timing-function: ease-in-out;
@@ -624,13 +623,8 @@ b, strong, .font-700 {
   animation: fadeInOut1 20s ease-in-out infinite;
 }
 
-.first-screen__svg-2 {
-  transform-origin: center center;
-  animation: fadeInOut2 20s ease-in-out infinite, rotate 20s linear infinite;
-}
-
 .first-screen {
-  padding-top: 12rem;
+  padding-top: 17rem;
 }
 .first-screen__left {
   width: 60%;
@@ -754,40 +748,11 @@ b, strong, .font-700 {
   }
 }
 @keyframes fadeInOut1 {
-  0% {
+  0%, 100% {
     opacity: 0.5;
   }
-  15% {
+  50% {
     opacity: 1;
-  }
-  40% {
-    opacity: 1;
-  }
-  65% {
-    opacity: 1;
-  }
-  85% {
-    opacity: 0.3;
-  }
-  100% {
-    opacity: 0.5;
-  }
-}
-@keyframes fadeInOut2 {
-  0% {
-    opacity: 0.5;
-  }
-  35% {
-    opacity: 0.3;
-  }
-  60% {
-    opacity: 1;
-  }
-  85% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.5;
   }
 }
 @keyframes rotate {
@@ -846,7 +811,10 @@ b, strong, .font-700 {
 .change-way .btn-container {
   display: flex;
   justify-content: center;
-  margin-top: 15rem;
+  margin-top: 20rem;
+}
+.change-way h2, .change-way .h2 {
+  font-size: 6.4rem;
 }
 
 .change-way__content {
@@ -1339,9 +1307,12 @@ b, strong, .font-700 {
 .reedem .block-title .accent {
   display: block;
 }
+.reedem .h2 {
+  font-size: 6.4rem;
+}
 .reedem__content {
   border-radius: 30px;
-  padding: 10px;
+  padding: 16px 13px;
   background: linear-gradient(to right, #9775FB, #6939F9 100%);
 }
 .reedem .btns-container {
@@ -1445,7 +1416,7 @@ b, strong, .font-700 {
   width: 100%;
   height: 300px;
   box-sizing: border-box;
-  min-height: 300px;
+  min-height: 294px;
 }
 .tab-content-slide--login {
   display: flex !important;
@@ -1729,6 +1700,7 @@ b, strong, .font-700 {
   max-width: 76.2rem;
 }
 .btn-effect .btn {
+  background: linear-gradient(to right, #C1F53D, #68FF0C);
   z-index: 20;
 }
 .btn-effect::before, .btn-effect::after {
@@ -1905,12 +1877,9 @@ b, strong, .font-700 {
   width: 90rem;
   height: 90rem;
   position: absolute;
-  top: 4%;
+  top: 12%;
   right: -10%;
-  z-index: -1;
   pointer-events: none;
-  opacity: 0.4;
-  animation: rotate 30s linear infinite;
 }
 .slider-shape svg {
   width: 100%;
@@ -1922,7 +1891,6 @@ b, strong, .font-700 {
   top: 4%;
   left: 50%;
   transform: translateX(-50%);
-  z-index: -1;
   pointer-events: none;
   width: 100%;
   height: 50%;
@@ -2057,27 +2025,29 @@ b, strong, .font-700 {
   height: 24.8rem;
   position: absolute;
   left: 47%;
-  top: -4%;
+  top: 5%;
   z-index: 1;
 }
 .ball--2 {
   width: 32rem;
   height: 32rem;
-  left: 65%;
-  top: -20rem;
+  left: 55%;
+  top: -21rem;
   filter: blur(5px);
+  z-index: 1;
 }
 .ball--3 {
   width: 30rem;
   height: 30rem;
-  right: 13%;
+  right: 15%;
   top: 100%;
+  z-index: 1;
 }
 .ball--4 {
-  width: 46rem;
+  width: 46.7rem;
   right: -15rem;
-  top: 80%;
-  filter: blur(20px);
+  top: 70%;
+  filter: blur(6px);
 }
 .ball--5 {
   width: 4.8rem;
@@ -2086,19 +2056,19 @@ b, strong, .font-700 {
 }
 .ball--6 {
   width: 22rem;
-  left: -37%;
+  left: -18vw;
   bottom: 1%;
 }
 .ball--7 {
   width: 30rem;
   bottom: -20%;
-  left: -32%;
-  filter: blur(3px);
+  left: -12vw;
+  filter: blur(9px);
 }
 .ball--8 {
   width: 9rem;
-  bottom: 6%;
-  left: -1%;
+  bottom: 10%;
+  left: 7vw;
 }
 .ball--9 {
   width: 21rem;
@@ -2133,10 +2103,11 @@ b, strong, .font-700 {
 }
 .ball--14 {
   width: 27.3rem;
-  top: 8%;
+  top: 11%;
   z-index: 1;
-  left: -4%;
-  filter: blur(6px);
+  left: -5%;
+  filter: blur(4px);
+  z-index: 0;
 }
 .ball--cat {
   top: -55px;
@@ -2144,6 +2115,7 @@ b, strong, .font-700 {
   z-index: 1;
   animation: catBallFloat 7s linear infinite;
   transform-origin: center center;
+  z-index: 1;
 }
 .ball--15 {
   width: 16.5rem;
@@ -2153,9 +2125,9 @@ b, strong, .font-700 {
 }
 .ball--16 {
   width: 26rem;
-  right: -29rem;
+  right: -18vw;
   top: -10rem;
-  filter: blur(10px);
+  filter: blur(5px);
 }
 
 @keyframes catBallFloat {
@@ -2206,12 +2178,6 @@ b, strong, .font-700 {
 }
 
 @media (max-width: 1700px) {
-  .first-screen__svg-1, .first-screen__svg-2 {
-    animation: none !important;
-    width: 100%;
-    height: 50vh;
-    opacity: 1;
-  }
   .ball--5 {
     right: 8vw;
   }
@@ -2494,6 +2460,8 @@ b, strong, .font-700 {
   h1, .h1 {
     font-size: 5.7rem;
   }
+  .reedem .h2,
+  .change-way .h2,
   h2, .h2 {
     font-size: 4rem;
   }

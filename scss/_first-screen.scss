@@ -3,7 +3,6 @@
     position: absolute;
     top: 0;
     right: 0;
-    filter: blur(90px);
     z-index: -2;
     opacity: 0;
     animation-timing-function: ease-in-out;
@@ -14,13 +13,8 @@
     animation: fadeInOut1 20s ease-in-out infinite;
 }
 
-.first-screen__svg-2 {
-    transform-origin: center center;
-    animation: fadeInOut2 20s ease-in-out infinite, rotate 20s linear infinite;
-}
-
 .first-screen {
-    padding-top: 12rem;
+    padding-top: 17rem;
     &__left {
         width: 60%;
         .h1 {
@@ -135,20 +129,8 @@
 }
 
 @keyframes fadeInOut1 {
-    0% { opacity: 0.5; }
-    15% { opacity: 1; }
-    40% { opacity: 1; }
-    65% { opacity: 1; }
-    85% { opacity: 0.3; }
-    100% { opacity: 0.5; }
-}
-
-@keyframes fadeInOut2 {
-    0% { opacity: 0.5; }
-    35% { opacity: 0.3; }
-    60% { opacity: 1; }
-    85% { opacity: 1; }
-    100% { opacity: 0.5; }
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
 }
 
 @keyframes rotate {

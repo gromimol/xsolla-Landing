@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Устанавливаем фиксированную высоту контента
     const isMobile = window.innerWidth < 768;
-    const slideHeight = isMobile ? 290 : 300;
+    const slideHeight = isMobile ? 290 : 294;
     tabContent.style.height = `${slideHeight}px`;
     
     // Перемещаем все слайды в контейнер
