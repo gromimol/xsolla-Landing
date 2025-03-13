@@ -5,6 +5,32 @@
         }
     }
 }
+@media(max-height: 800px) {
+     
+     h2, .h2 {
+        font-size: 5rem;
+     }
+    .reedem .h2 ,
+    .change-way h2, .change-way .h2{
+        font-size: 5.2rem;
+    }
+}
+@media(max-height: 750px) {
+     
+    h2, .h2 {
+       font-size: 4.5rem;
+    }
+   .reedem .h2 ,
+   .change-way h2, .change-way .h2{
+       font-size: 4.7rem;
+   }
+   .reedem__body {
+    padding-top: 3rem;
+   }
+   .reedem .block-title {
+    margin-bottom: 2rem;
+   }
+}
 @media(max-width: 1360px) {
     html {
         font-size: 0.7vw;
@@ -498,6 +524,22 @@
     }
     .last-screen {
         border-radius: 12px 12px 0 0;
+    }
+    .reedem__content,
+    .tab-background {
+        border-radius: 11px;
+    }
+    .reedem-tab-content {
+        font-size: 14px;
+    }
+    .tab-content-slide {
+        min-height: 254px;
+    }
+    .game-slider .slide__content {
+        height: 139px;
+    }
+    .game-slider .slide .game-title {
+        height: 67px;
     }
 }
 // 767

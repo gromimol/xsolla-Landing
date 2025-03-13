@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Устанавливаем фиксированную высоту контента
     const isMobile = window.innerWidth < 768;
-    const slideHeight = isMobile ? 290 : 294;
+    const slideHeight = isMobile ? 285 : 294;
     tabContent.style.height = `${slideHeight}px`;
     
     // Перемещаем все слайды в контейнер
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Если тип устройства изменился, обновляем высоту
         if (wasIsMobile !== newIsMobile) {
-            const newSlideHeight = newIsMobile ? 290 : 300;
+            const newSlideHeight = newIsMobile ? 254 : 300;
             
             // Обновляем высоту контейнера
             tabContent.style.height = `${newSlideHeight}px`;
@@ -347,164 +347,6 @@ document.addEventListener('DOMContentLoaded', function() {
     $('.close').on('click',function() {
       $('body').removeClass('menu-open');
     })
-});
-
-
-document.addEventListener('DOMContentLoaded', function() {
-  // Проверяем, является ли устройство мобильным
-  const isMobile = window.matchMedia('(max-width: 1200px)').matches;
-  
-  // Выполняем код только если это не мобильное устройство
-  if (!isMobile) {
-    // Регистрируем плагин
-    gsap.registerPlugin(ScrollTrigger);
-    
-    // Создаем последовательность секций
-    const sections = ['.earn', '.reedem'];
-    
-    // Функция для проверки переполнения контента в секции
-    function isContentOverflow(section) {
-      const element = document.querySelector(section);
-      if (!element) return false;
-      
-      // Проверяем, превышает ли контент высоту видимой области
-      const contentHeight = element.scrollHeight;
-      const viewportHeight = window.innerHeight;
-      
-      return contentHeight > viewportHeight * 1.1; // Добавляем небольшой запас (10%)
-    }
-    
-    // Пересоздаем триггеры при изменении размера окна
-    function createTriggers() {
-      // Проверяем, не стало ли устройство мобильным после ресайза
-      const isMobileAfterResize = window.matchMedia('(max-width: 1200px)').matches;
-      
-      // Если стало мобильным, удаляем все триггеры и выходим
-      if (isMobileAfterResize) {
-        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-        return;
-      }
-      
-      // Сначала убираем существующие триггеры
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-      
-      // ВАЖНО: Убираем margin-top у last-screen
-      const lastScreen = document.querySelector('.last-screen');
-      if (lastScreen) {
-        lastScreen.style.marginTop = '0';
-      }
-      
-      // Проверяем переполнение last-screen
-      const lastScreenNeedsScroll = isContentOverflow('.last-screen');
-      
-      // Для redeem секции особый подход - не используем pin
-      const redeemSection = document.querySelector('.reedem');
-      if (redeemSection) {
-        // Убираем стили пина, если они были
-        redeemSection.style.position = '';
-        redeemSection.style.zIndex = '';
-        redeemSection.style.top = '';
-        
-        // Устанавливаем auto высоту для секции redeem
-        redeemSection.style.height = 'auto';
-        redeemSection.style.minHeight = 'auto';
-      }
-      
-      sections.forEach((section, i) => {
-        const sectionEl = document.querySelector(section);
-        if (!sectionEl) return;
-          
-        // Получаем актуальную высоту секции
-        const sectionHeight = sectionEl.offsetHeight;
-        
-        // Пропускаем пиннинг last-screen, если контент переполнен
-        if (section === '.last-screen' && lastScreenNeedsScroll) {
-          // Не применяем pin для последней секции, позволяя ей скроллиться
-          sectionEl.style.position = 'relative';
-          sectionEl.style.zIndex = '1';
-          sectionEl.style.overflow = 'auto';
-          sectionEl.style.maxHeight = '100vh';
-          sectionEl.style.marginTop = '0'; // ВАЖНО: Гарантируем отсутствие отступа
-          return;
-        }
-        
-        // Стандартный подход для других секций
-        ScrollTrigger.create({
-          trigger: section,
-          start: 'top top',
-          end: `+=${sectionHeight}`,
-          pin: true,
-          pinSpacing: false,
-          anticipatePin: 1,
-          zIndex: 10 - i
-        });
-      });
-      
-      // Обеспечиваем плавное соединение между секциями
-      const style = document.createElement('style');
-      style.id = 'scroll-fix-style';
-      style.textContent = `
-        .reedem {
-          padding-bottom: 30px;
-        }
-        .last-screen {
-          margin-top: 0 !important;
-        }
-      `;
-      
-      // Убираем старый стиль, если он существует
-      const oldStyle = document.getElementById('scroll-fix-style');
-      if (oldStyle) {
-        oldStyle.remove();
-      }
-      
-      // Добавляем новый стиль
-      document.head.appendChild(style);
-    }
-    
-    // Создаем триггеры при загрузке
-    createTriggers();
-    
-    // И обновляем при изменении размера окна
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        createTriggers();
-      }, 200);
-    });
-    
-    // Дополнительный MutationObserver для отслеживания изменений
-    const observer = new MutationObserver(gsap.debounce(() => {
-      // Проверяем, не появился ли снова отступ у last-screen
-      const lastScreen = document.querySelector('.last-screen');
-      if (lastScreen && lastScreen.style.marginTop !== '0px') {
-        lastScreen.style.marginTop = '0';
-      }
-    }, 200));
-    
-    // Следим за изменениями у last-screen
-    const lastScreen = document.querySelector('.last-screen');
-    if (lastScreen) {
-      observer.observe(lastScreen, {
-        attributes: true,
-        attributeFilter: ['style']
-      });
-    }
-    
-    // Дополнительная проверка после полной загрузки страницы
-    window.addEventListener('load', function() {
-      createTriggers();
-      
-      // Дополнительная защита - сбросим margin через 1 секунду после загрузки
-      setTimeout(() => {
-        const lastScreen = document.querySelector('.last-screen');
-        if (lastScreen) {
-          lastScreen.style.marginTop = '0';
-        }
-      }, 1000);
-    });
-  }
 });
 
 // Wait for the page to load
@@ -850,186 +692,304 @@ window.addEventListener("load", () => {
   }
 });
 
-  // Анимация контента внутри блоков при скролле
 document.addEventListener('DOMContentLoaded', function() {
+  // Проверяем, является ли устройство мобильным
   const isMobile = window.matchMedia('(max-width: 1200px)').matches;
   
-  if (!isMobile && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+  // Выполняем код только если это не мобильное устройство
+  if (!isMobile) {
+    // Регистрируем плагин
     gsap.registerPlugin(ScrollTrigger);
     
-    const getOffset = () => {
-      return window.innerWidth <= 1024 ? 50 : 300;
-    };
+    // Создаем последовательность секций
+    const sections = ['.earn', '.reedem'];
     
-    let scrollOffset = getOffset();
+    // Функция для проверки переполнения контента в секции
+    function isContentOverflow(section) {
+      const element = document.querySelector(section);
+      if (!element) return false;
+      
+      // Проверяем, превышает ли контент высоту видимой области
+      const contentHeight = element.scrollHeight;
+      const viewportHeight = window.innerHeight;
+      
+      return contentHeight > viewportHeight * 1.1; // Добавляем небольшой запас (10%)
+    }
     
+    // Пересоздаем триггеры при изменении размера окна
+    function createTriggers() {
+      // Проверяем, не стало ли устройство мобильным после ресайза
+      const isMobileAfterResize = window.matchMedia('(max-width: 1200px)').matches;
+      
+      // Если стало мобильным, удаляем все триггеры и выходим
+      if (isMobileAfterResize) {
+        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+        return;
+      }
+      
+      // Сначала убираем существующие триггеры
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      
+      // ВАЖНО: Убираем margin-top у last-screen
+      const lastScreen = document.querySelector('.last-screen');
+      if (lastScreen) {
+        lastScreen.style.marginTop = '0';
+      }
+      
+      // Проверяем переполнение last-screen
+      const lastScreenNeedsScroll = isContentOverflow('.last-screen');
+      
+      // Для redeem секции особый подход - не используем pin
+      const redeemSection = document.querySelector('.reedem');
+      if (redeemSection) {
+        // Убираем стили пина, если они были
+        redeemSection.style.position = '';
+        redeemSection.style.zIndex = '';
+        redeemSection.style.top = '';
+        
+        // Устанавливаем auto высоту для секции redeem
+        redeemSection.style.height = 'auto';
+        redeemSection.style.minHeight = 'auto';
+      }
+      
+      sections.forEach((section, i) => {
+        const sectionEl = document.querySelector(section);
+        if (!sectionEl) return;
+          
+        // Получаем актуальную высоту секции
+        const sectionHeight = sectionEl.offsetHeight;
+        
+        // Пропускаем пиннинг last-screen, если контент переполнен
+        if (section === '.last-screen' && lastScreenNeedsScroll) {
+          // Не применяем pin для последней секции, позволяя ей скроллиться
+          sectionEl.style.position = 'relative';
+          sectionEl.style.zIndex = '1';
+          sectionEl.style.overflow = 'auto';
+          sectionEl.style.maxHeight = '100vh';
+          sectionEl.style.marginTop = '0'; // ВАЖНО: Гарантируем отсутствие отступа
+          return;
+        }
+        
+        // Стандартный подход для других секций
+        ScrollTrigger.create({
+          trigger: section,
+          start: 'top top',
+          end: `+=${sectionHeight}`,
+          pin: true,
+          pinSpacing: false,
+          anticipatePin: 1,
+          zIndex: 10 - i
+        });
+      });
+      
+      // Обеспечиваем плавное соединение между секциями
+      const style = document.createElement('style');
+      style.id = 'scroll-fix-style';
+      style.textContent = `
+        .reedem {
+          padding-bottom: 30px;
+        }
+        .last-screen {
+          margin-top: 0 !important;
+        }
+      `;
+      
+      // Убираем старый стиль, если он существует
+      const oldStyle = document.getElementById('scroll-fix-style');
+      if (oldStyle) {
+        oldStyle.remove();
+      }
+      
+      // Добавляем новый стиль
+      document.head.appendChild(style);
+    }
+    
+    // Создаем триггеры при загрузке
+    createTriggers();
+    
+    // И обновляем при изменении размера окна
     let resizeTimeout;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
-        const isMobileAfterResize = window.matchMedia('(max-width: 1200px)').matches;
-        
-        if (isMobileAfterResize) {
-          ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-          
-          showAllElementsOnMobile();
-          return;
-        }
-        
-        // Если не мобильн, обновляем отступ и обновляем триггеры
-        scrollOffset = getOffset();
-        ScrollTrigger.refresh();
+        createTriggers();
       }, 200);
     });
     
-    //  для показа на мобильных
-    function showAllElementsOnMobile() {
-      const items = document.querySelectorAll('.change-way__item');
-      
-      items.forEach(item => {
-        const content = item.querySelector('.vertical, .text-block, .horizontal, .change-way__item__row');
-        if (content) {
-          gsap.set(content, { autoAlpha: 1, y: 0, x: 0 });
-        }
-      });
-      
-      const btnContainer = document.querySelector('.change-way .btn-container');
-      if (btnContainer) {
-        gsap.set(btnContainer, { autoAlpha: 1, y: 0 });
-      }
+    // Дополнительный MutationObserver для отслеживания изменений
+    // const observer = new MutationObserver(gsap.debounce(() => {
+    //   // Проверяем, не появился ли снова отступ у last-screen
+    //   const lastScreen = document.querySelector('.last-screen');
+    //   if (lastScreen && lastScreen.style.marginTop !== '0px') {
+    //     lastScreen.style.marginTop = '0';
+    //   }
+    // }, 200));
+    
+    // Следим за изменениями у last-screen
+    const lastScreen = document.querySelector('.last-screen');
+    if (lastScreen) {
+      // observer.observe(lastScreen, {
+      //   attributes: true,
+      //   attributeFilter: ['style']
+      // });
     }
     
-    const items = document.querySelectorAll('.change-way__item');
-    
-    if (items.length > 0) {
-      if (items[0]) {
-        const firstItemContent = items[0].querySelector('.vertical, .text-block');
-        gsap.set(firstItemContent, { autoAlpha: 0, y: 50 });
-        
-        gsap.to(firstItemContent, { 
-          autoAlpha: 1, 
-          y: 0, 
-          duration: 0.8, 
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: items[0],
-            start: () => `top bottom-=${scrollOffset}`,
-            toggleActions: 'play none none reverse'
-          }
-        });
-      }
+    // Дополнительная проверка после полной загрузки страницы
+    window.addEventListener('load', function() {
+      createTriggers();
       
-      if (items.length > 1) {
-        const secondItemContent = items[1].querySelector('.horizontal, .text-block');
-        gsap.set(secondItemContent, { autoAlpha: 0, x: 50 });
-        
-        const gamesList = items[1].querySelector('.horizontal');
-      
-        gsap.to(secondItemContent, { 
-          autoAlpha: 1, 
-          x: 0, 
-          duration: 0.8, 
-          delay: 0.5,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: items[1],
-            start: () => `top bottom-=${scrollOffset}`,
-            toggleActions: 'play none none reverse'
-          },
-          onComplete: function() {
-            if (gamesList) {
-              const scrollWidth = gamesList.scrollWidth - gamesList.clientWidth;
-              if (scrollWidth > 0) {
-                gsap.to(gamesList, {
-                  scrollLeft: scrollWidth,
-                  duration: 4,
-                  ease: "power1.out",
-                  delay: 0.3
-                });
-              }
-            }
-          }
-        });
-      }
-      
-      if (items.length > 2) {
-        const thirdItemContent = items[2].querySelector('.change-way__item__row');
-        gsap.set(thirdItemContent, { autoAlpha: 0 });
-        
-        gsap.to(thirdItemContent, { 
-          autoAlpha: 1, 
-          duration: 1, 
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: items[2],
-            start: () => `top bottom-=${scrollOffset}`,
-            toggleActions: 'play none none reverse'
-          }
-        });
-      }
-    }
-    
-    const btnContainer = document.querySelector('.change-way .btn-container');
-    if (btnContainer) {
-      gsap.set(btnContainer, { autoAlpha: 0, y: 30 });
-      
-      gsap.to(btnContainer, { 
-        autoAlpha: 1, 
-        y: 0, 
-        duration: 0.8, 
-        delay: 0.4,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: btnContainer,
-          start: () => `top bottom-=${scrollOffset > 250 ? 250 : scrollOffset}`,
-          toggleActions: 'play none none reverse'
-        }
-      });
-    }
-  } else if (isMobile) {
-    if (typeof gsap !== 'undefined') {
-      // для показа на мобильных
-      function showAllElementsOnMobile() {
-        const items = document.querySelectorAll('.change-way__item');
-        
-        items.forEach(item => {
-          const content = item.querySelector('.vertical, .text-block, .horizontal, .change-way__item__row');
-          if (content) {
-            gsap.set(content, { autoAlpha: 1, y: 0, x: 0 });
-          }
-        });
-        
-        // Show the button in the container
-        const btnContainer = document.querySelector('.change-way .btn-container');
-        if (btnContainer) {
-          gsap.set(btnContainer, { autoAlpha: 1, y: 0 });
-        }
-      }
-      
-      showAllElementsOnMobile();
-      
-      // If ScrollTrigger is loaded, kill all triggers
-      if (typeof ScrollTrigger !== 'undefined') {
-        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-      }
-    } else {
-      // If gsap is not loaded, just show the elements via CSS
-      const style = document.createElement('style');
-      style.textContent = `
-        .change-way__item .vertical, 
-        .change-way__item .text-block, 
-        .change-way__item .horizontal, 
-        .change-way__item .change-way__item__row,
-        .change-way .btn-container {
-          opacity: 1 !important;
-          visibility: visible !important;
-          transform: none !important;
-        }
-      `;
-      document.head.appendChild(style);
-    }
-  } else {
-    console.warn('GSAP or ScrollTrigger are not found. Make sure the libraries are loaded.');
+      // Дополнительная защита - сбросим margin через 1 секунду после загрузки
+      // setTimeout(() => {
+      //   const lastScreen = document.querySelector('.last-screen');
+      //   if (lastScreen) {
+      //     lastScreen.style.marginTop = '0';
+      //   }
+      // }, 1000);
+    });
   }
 });
 
+// Плавное появление элементов при скролле
+$(document).ready(function() {
+  // Определяем, является ли устройство мобильным
+  const isMobile = window.matchMedia('(max-width: 1200px)').matches;
+  
+  // Отступ от нижней границы viewport для срабатывания анимации
+  const scrollOffset = window.innerWidth <= 1024 ? 50 : 200;
+  
+  const $items = $('.change-way__item');
+  const $btnContainer = $('.change-way .btn-container');
+  // Функция для показа всех элементов на мобильных устройствах
+  function showAllElementsOnMobile() {
+    $items.each(function() {
+      $(this).find('.vertical, .text-block, .horizontal, .change-way__item__row').css({
+        'opacity': 1,
+        'visibility': 'visible',
+        'transform': 'translate(0, 0)'
+      });
+    });
+    
+    if ($btnContainer.length) {
+      $btnContainer.css({
+        'opacity': 1,
+        'visibility': 'visible',
+        'transform': 'translate(0, 0)'
+      });
+    }
+  }
+  
+  // Если мобильное устройство, просто показываем элементы без анимации
+  if (isMobile) {
+    showAllElementsOnMobile();
+    return;
+  }
+  
+  // Настраиваем начальные стили для элементов (скрыты)
+  if ($items.length > 0) {
+    // Первый элемент (движение снизу вверх)
+    $items.eq(0).find('.vertical, .text-block').css({
+      'opacity': 0,
+      'transform': 'translateY(50px)',
+      'transition': 'opacity 0.8s ease, transform 0.8s ease'
+    });
+    
+    // Второй элемент (движение справа налево)
+    if ($items.length > 1) {
+      $items.eq(1).find('.horizontal, .text-block').css({
+        'opacity': 0,
+        'transform': 'translateX(50px)',
+        'transition': 'opacity 0.8s ease, transform 0.8s ease'
+      });
+    }
+    
+    // Третий элемент (появление с изменением прозрачности)
+    if ($items.length > 2) {
+      $items.eq(2).find('.change-way__item__row').css({
+        'opacity': 0,
+        'transition': 'opacity 1s ease'
+      });
+    }
+  }
+  
+  // Настраиваем стиль для кнопки
+  if ($btnContainer.length) {
+    $btnContainer.css({
+      'opacity': 0,
+      'transform': 'translateY(30px)',
+      'transition': 'opacity 0.8s ease, transform 0.8s ease'
+    });
+  }
+  
+  // Функция для проверки, находится ли элемент в зоне видимости
+  function isElementInViewport($element, offset) {
+    if (!$element.length) return false;
+    
+    const windowHeight = $(window).height();
+    const scrollTop = $(window).scrollTop();
+    const elementTop = $element.offset().top;
+    
+    return (elementTop < (scrollTop + windowHeight - offset));
+  }
+  
+  // Функция для анимации элементов
+  function animateOnScroll() {
+    // Анимация первого элемента
+    if ($items.length > 0) {
+      if (isElementInViewport($items.eq(0), scrollOffset)) {
+        $items.eq(0).find('.vertical, .text-block').css({
+          'opacity': 1,
+          'transform': 'translateY(0)'
+        });
+      }
+      
+      // Анимация второго элемента
+      if ($items.length > 1 && isElementInViewport($items.eq(1), scrollOffset)) {
+        $items.eq(1).find('.horizontal, .text-block').css({
+          'opacity': 1,
+          'transform': 'translateX(0)'
+        });
+        
+        // Дополнительная анимация для горизонтального списка
+        setTimeout(function() {
+          const $gamesList = $items.eq(1).find('.horizontal');
+          if ($gamesList.length) {
+            const scrollWidth = $gamesList[0].scrollWidth - $gamesList.width();
+            if (scrollWidth > 0) {
+              $gamesList.animate({
+                scrollLeft: scrollWidth
+              }, 4000, 'swing');
+            }
+          }
+        }, 800);
+      }
+      
+      // Анимация третьего элемента
+      if ($items.length > 2 && isElementInViewport($items.eq(2), scrollOffset)) {
+        $items.eq(2).find('.change-way__item__row').css('opacity', 1);
+      }
+    }
+    
+    // Анимация кнопки
+    if ($btnContainer.length && isElementInViewport($btnContainer, Math.min(scrollOffset, 250))) {
+      $btnContainer.css({
+        'opacity': 1,
+        'transform': 'translateY(0)'
+      });
+    }
+  }
+  
+  // Запускаем анимацию при скролле
+  $(window).on('scroll resize', animateOnScroll);
+  
+  // Запускаем анимацию сразу после загрузки
+  animateOnScroll();
+  
+  // Обработчик изменения размера окна
+  $(window).on('resize', function() {
+    const isMobileAfterResize = window.matchMedia('(max-width: 1200px)').matches;
+    if (isMobileAfterResize) {
+      showAllElementsOnMobile();
+      $(window).off('scroll resize', animateOnScroll);
+    }
+  });
+});

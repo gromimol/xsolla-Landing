@@ -39,7 +39,8 @@
 .change-way__item {
     border-radius: 48px;
     padding: 4.5rem;
-    background: #292731;
+    background: #32294E;
+
 
     &:last-child {
         grid-column: 1 / -1;
@@ -78,7 +79,7 @@
             position: absolute;
             bottom: 0;
             left: 0;
-            background: linear-gradient(to bottom, rgba(41, 39, 49, 0) 10%, rgba(41, 39, 49, 0.4) 20%, rgba(41, 39, 49, 0.7) 40%, #292731 100%);
+            background: linear-gradient(to bottom, rgba(50, 41, 78, 0) 10%, rgba(50, 41, 78, 0.4) 20%, rgba(50, 41, 78, 0.7) 40%, rgb(50, 41, 78) 100%);
             pointer-events: none;
         }
     }
@@ -93,7 +94,7 @@
             position: absolute;
             bottom: 0;
             right: -1px;
-            background: linear-gradient(to right, rgba(41, 39, 49, 0) 0%, rgba(41, 39, 49, 0.2) 30%, #292731 95%);
+            background: linear-gradient(to right, rgba(50, 41, 78, 0) 0%, rgba(50, 41, 78, 0.2) 30%, #32294E 95%);
             pointer-events: none;
         }
     }

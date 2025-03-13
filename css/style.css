@@ -147,10 +147,6 @@ END RESETT CSS
   --violet: #6939F9;
 }
 
-html, body {
-  min-height: 100%;
-}
-
 html {
   font-size: 10px;
 }
@@ -826,7 +822,7 @@ b, strong, .font-700 {
 .change-way__item {
   border-radius: 48px;
   padding: 4.5rem;
-  background: #292731;
+  background: #32294E;
 }
 .change-way__item:last-child {
   grid-column: 1/-1;
@@ -864,7 +860,7 @@ b, strong, .font-700 {
   position: absolute;
   bottom: 0;
   left: 0;
-  background: linear-gradient(to bottom, rgba(41, 39, 49, 0) 10%, rgba(41, 39, 49, 0.4) 20%, rgba(41, 39, 49, 0.7) 40%, #292731 100%);
+  background: linear-gradient(to bottom, rgba(50, 41, 78, 0) 10%, rgba(50, 41, 78, 0.4) 20%, rgba(50, 41, 78, 0.7) 40%, rgb(50, 41, 78) 100%);
   pointer-events: none;
 }
 .change-way__item .horizontal {
@@ -878,7 +874,7 @@ b, strong, .font-700 {
   position: absolute;
   bottom: 0;
   right: -1px;
-  background: linear-gradient(to right, rgba(41, 39, 49, 0) 0%, rgba(41, 39, 49, 0.2) 30%, #292731 95%);
+  background: linear-gradient(to right, rgba(50, 41, 78, 0) 0%, rgba(50, 41, 78, 0.2) 30%, #32294E 95%);
   pointer-events: none;
 }
 .change-way__item__row {
@@ -1298,7 +1294,8 @@ b, strong, .font-700 {
 }
 .reedem__body {
   background: #171320;
-  padding-top: 6.3rem;
+  padding-top: 8rem;
+  padding-bottom: 8rem;
 }
 .reedem .block-title {
   margin: 0 auto 4.8rem;
@@ -1677,9 +1674,9 @@ b, strong, .font-700 {
 }
 .btn--lg {
   width: 100%;
-  max-width: 76.2rem;
-  font-size: 3rem;
-  border-radius: 30px;
+  max-width: 60rem;
+  font-size: 2.4rem;
+  border-radius: 24px;
 }
 .btn--full {
   width: 100%;
@@ -1697,7 +1694,7 @@ b, strong, .font-700 {
 .btn-effect {
   position: relative;
   width: 100%;
-  max-width: 76.2rem;
+  max-width: 60rem;
 }
 .btn-effect .btn {
   background: linear-gradient(to right, #C1F53D, #68FF0C);
@@ -2182,6 +2179,30 @@ b, strong, .font-700 {
     right: 8vw;
   }
 }
+@media (max-height: 800px) {
+  h2, .h2 {
+    font-size: 5rem;
+  }
+  .reedem .h2,
+  .change-way h2, .change-way .h2 {
+    font-size: 5.2rem;
+  }
+}
+@media (max-height: 750px) {
+  h2, .h2 {
+    font-size: 4.5rem;
+  }
+  .reedem .h2,
+  .change-way h2, .change-way .h2 {
+    font-size: 4.7rem;
+  }
+  .reedem__body {
+    padding-top: 3rem;
+  }
+  .reedem .block-title {
+    margin-bottom: 2rem;
+  }
+}
 @media (max-width: 1360px) {
   html {
     font-size: 0.7vw;
@@ -2657,6 +2678,22 @@ b, strong, .font-700 {
   }
   .last-screen {
     border-radius: 12px 12px 0 0;
+  }
+  .reedem__content,
+  .tab-background {
+    border-radius: 11px;
+  }
+  .reedem-tab-content {
+    font-size: 14px;
+  }
+  .tab-content-slide {
+    min-height: 254px;
+  }
+  .game-slider .slide__content {
+    height: 139px;
+  }
+  .game-slider .slide .game-title {
+    height: 67px;
   }
 }
 @media (max-width: 640px) {
