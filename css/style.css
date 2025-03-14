@@ -1794,20 +1794,14 @@ b, strong, .font-700 {
 .game-slider .slide {
   transition: all 0.3s;
 }
-.game-slider .slide.slick-center {
-  transform: scale(1.2);
-}
-.game-slider .slide.slick-center .game-logo img {
-  filter: brightness(1);
-}
-.game-slider .slide.slick-center .game-title {
+.game-slider .slide.slick-center .game-title, .game-slider .slide.slick-current .game-title {
   background: var(--accent-color);
   color: var(--main-color);
 }
 .game-slider .slide__content {
-  border-radius: 10px;
+  border-radius: 20px;
   background: linear-gradient(to bottom, #221C30 0%, #171320 100%);
-  height: 209px;
+  height: 400px;
   display: flex;
   flex-direction: column;
 }
@@ -1818,19 +1812,23 @@ b, strong, .font-700 {
   justify-content: center;
   padding: 15px;
 }
-.game-slider .slide .game-logo img {
-  filter: brightness(0.5);
+.game-slider .slide .game-logo img, .game-slider .slide .game-logo picture {
+  max-width: 100%;
   transition: all 0.3s;
 }
 .game-slider .slide .game-title {
-  height: 84px;
-  border-radius: 10px;
+  height: 96px;
+  border-radius: 20px;
   background: #2C2640;
-  font-size: 20px;
-  padding: 12px;
+  font-size: 24px;
+  padding: 1em 0.75em;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.5);
+  text-decoration: underline;
   transition: all 0.3s;
+}
+.game-slider .slide .game-title:hover {
+  text-decoration: none;
 }
 
 .slider-controls {
@@ -1897,19 +1895,6 @@ b, strong, .font-700 {
   height: 100%;
 }
 
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-    opacity: 0.4;
-  }
-  50% {
-    opacity: 0.2;
-  }
-  to {
-    opacity: 0.4;
-    transform: rotate(360deg);
-  }
-}
 .faq {
   padding-bottom: 25px;
 }
@@ -2117,7 +2102,7 @@ b, strong, .font-700 {
 .ball--15 {
   width: 16.5rem;
   top: 14%;
-  right: -4rem;
+  right: -10rem;
   z-index: 3;
 }
 .ball--16 {
@@ -2495,9 +2480,6 @@ b, strong, .font-700 {
   .accordion-header__title {
     font-size: 18px;
   }
-  .game-slider .slide .game-title {
-    font-size: 16px;
-  }
   .accordion-content,
   .accordion-content p,
   .earn__card .description .title {
@@ -2507,6 +2489,9 @@ b, strong, .font-700 {
   .earn__card .description .text,
   .earn .bonus-list__item {
     font-size: 12px;
+  }
+  .game-slider .slide .game-title {
+    font-size: 10px;
   }
   .change-way__item .text-block .text {
     font-weight: 400;
@@ -2664,7 +2649,7 @@ b, strong, .font-700 {
     border-radius: 10px;
   }
   .game-slider .slick-track {
-    gap: 20px;
+    gap: 12px;
   }
   .first-screen__right {
     max-width: 300px;
@@ -2690,10 +2675,16 @@ b, strong, .font-700 {
     min-height: 254px;
   }
   .game-slider .slide__content {
-    height: 139px;
+    height: 144px;
+    border-radius: 8px;
   }
   .game-slider .slide .game-title {
-    height: 67px;
+    height: 35px;
+    border-radius: 8px;
+    text-decoration: none;
+  }
+  .slider-controls .slick-dots {
+    top: 2px;
   }
 }
 @media (max-width: 640px) {

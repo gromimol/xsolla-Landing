@@ -337,9 +337,6 @@
     .accordion-header__title {
         font-size: 18px;
     }
-    .game-slider .slide .game-title {
-        font-size: 16px;
-    }
     .accordion-content,
     .accordion-content p,
     .earn__card .description .title {
@@ -349,6 +346,9 @@
     .earn__card .description .text,
     .earn .bonus-list__item {
         font-size: 12px;
+    }
+    .game-slider .slide .game-title {
+        font-size: 10px;
     }
     .change-way__item .text-block .text {
         font-weight: 400;
@@ -510,7 +510,7 @@
         }
     }
     .game-slider .slick-track {
-        gap: 20px
+        gap: 12px
     }
     .first-screen__right {
         max-width: 300px;
@@ -536,10 +536,16 @@
         min-height: 254px;
     }
     .game-slider .slide__content {
-        height: 139px;
+        height: 144px;
+        border-radius: 8px;
     }
     .game-slider .slide .game-title {
-        height: 67px;
+        height: 35px;
+        border-radius: 8px;
+        text-decoration: none;
+    }
+    .slider-controls .slick-dots {
+        top: 2px;
     }
 }
 // 767

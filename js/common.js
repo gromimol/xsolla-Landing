@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   $(document).ready(function(){
     $('.game-slider').slick({
-        slidesToShow: 7,
+        slidesToShow: 3,
         slidesToScroll: 1,
         centerMode: true,
         centerPadding: '0px',
@@ -309,20 +309,6 @@ document.addEventListener('DOMContentLoaded', function() {
         customPaging: function(slider, i) {
             return '<button type="button"></button>';
         },
-        responsive: [
-            {
-                breakpoint: 1200,
-                settings: {
-                    slidesToShow: 5
-                }
-            },
-            {
-                breakpoint: 992,
-                settings: {
-                    slidesToShow: 3
-                }
-            },
-        ]
     });
     
     // Устанавливаем активный слайд (NetEase Games - 4-й слайд, индекс 3)
