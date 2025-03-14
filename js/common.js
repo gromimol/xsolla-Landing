@@ -299,29 +299,14 @@ document.addEventListener('DOMContentLoaded', function() {
     $('.game-slider').slick({
         slidesToShow: 3,
         slidesToScroll: 1,
-        // centerMode: true,
-        // centerPadding: '0px',
-        focusOnSelect: true,
+        centerMode: true,
+        centerPadding: '0px',
         prevArrow: $('.prev-arrow'),
         nextArrow: $('.next-arrow'),
         dots: $('.game-slider .slide').length > 3,
         appendDots: $('.slider-dots'),
     });
-    
-    // Добавляем класс slick-center к центральному слайду вручную
-    if ($('.game-slider .slide').length === 3) {
-      $('.game-slider .slide').eq(1).addClass('slick-center');
-  }
   
-  // Обновление класса slick-center при смене слайда
-  $('.game-slider').on('afterChange', function(event, slick, currentSlide) {
-      $('.game-slider .slide').removeClass('slick-center');
-      // Определяем центральный слайд (не активный, а именно визуально центральный)
-      var centerIndex = currentSlide + 1;
-      if (centerIndex >= slick.slideCount) centerIndex = 0;
-      $('.game-slider .slide').eq(centerIndex).addClass('slick-center');
-  });
-
     $('.has-submenu').on('click', function(e) {
       $(this).toggleClass('active');
     })

@@ -30,6 +30,7 @@
             padding: 15px;
             img, picture {
                 max-width: 100%;
+                max-height: 150px;
                 transition: all .3s;
             }
         }
@@ -53,18 +54,22 @@
 .slider-controls {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 10px;
     margin-bottom: 1rem;
 
     .prev-arrow,
     .next-arrow {
+        display: flex;
+        align-items: center;
         cursor: pointer;
     }
 
     .slick-dots {
         position: relative;
         bottom: 0;
-        top: -2px;
+        display: flex;
+        align-items: center;
         li {
             width: auto;
             height: auto;

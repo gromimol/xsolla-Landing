@@ -1814,6 +1814,7 @@ b, strong, .font-700 {
 }
 .game-slider .slide .game-logo img, .game-slider .slide .game-logo picture {
   max-width: 100%;
+  max-height: 150px;
   transition: all 0.3s;
 }
 .game-slider .slide .game-title {
@@ -1834,17 +1835,21 @@ b, strong, .font-700 {
 .slider-controls {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 10px;
   margin-bottom: 1rem;
 }
 .slider-controls .prev-arrow,
 .slider-controls .next-arrow {
+  display: flex;
+  align-items: center;
   cursor: pointer;
 }
 .slider-controls .slick-dots {
   position: relative;
   bottom: 0;
-  top: -2px;
+  display: flex;
+  align-items: center;
 }
 .slider-controls .slick-dots li {
   width: auto;
