@@ -1794,7 +1794,7 @@ b, strong, .font-700 {
 .game-slider .slide {
   transition: all 0.3s;
 }
-.game-slider .slide.slick-center .game-title, .game-slider .slide.slick-current .game-title {
+.game-slider .slide.slick-center .game-title {
   background: var(--accent-color);
   color: var(--main-color);
 }

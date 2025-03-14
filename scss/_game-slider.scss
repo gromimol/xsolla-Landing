@@ -8,8 +8,7 @@
     }
     .slide {
         transition: all .3s;
-        &.slick-center,
-        &.slick-current {
+        &.slick-center {
             .game-title {
                 background: var(--accent-color);
                 color: var(--main-color);
