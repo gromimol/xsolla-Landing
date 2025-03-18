@@ -310,9 +310,6 @@ document.addEventListener('DOMContentLoaded', function() {
     $('.has-submenu').on('click', function(e) {
       $(this).toggleClass('active');
     })
-    $('.has-submenu a').on('click', function(e) {
-      e.preventDefault();
-    });
 
     $('.burger').on('click',function() {
       $('body').addClass('menu-open');

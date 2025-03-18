@@ -36,10 +36,12 @@
             }
         }
         &.has-submenu {
-            & > a {
+            & > a,
+            & > span {
                 display: flex;
                 align-items: center;
                 gap: 6px;
+                cursor: pointer;
                 &::after {
                     content: '';
                     width: 11px;
@@ -63,7 +65,8 @@
             padding-left: 2.4rem;
             border-left: 2px solid rgba(#fff, .15);
         }
-        & a {
+        & a,
+        & span {
             &:hover {
                 color: var(--accent-color);
             } 
