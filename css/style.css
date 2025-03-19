@@ -1625,6 +1625,24 @@ b, strong, .font-700 {
     transform: translate(0%, 0%) rotate(0deg);
   }
 }
+form {
+  position: relative;
+  cursor: not-allowed;
+}
+form::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: calc(100% + 20px);
+  height: calc(100% + 20px);
+  background: rgba(255, 255, 255, 0);
+  -webkit-backdrop-filter: blur(1px);
+          backdrop-filter: blur(1px);
+  z-index: 1;
+  border-radius: 10px;
+}
+
 .btn {
   display: inline-flex;
   justify-content: center;
