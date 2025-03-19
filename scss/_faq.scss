@@ -57,6 +57,12 @@
         line-height: 1.5;
         font-weight: 400;
     }
+    a {
+      text-decoration: underline;
+      &:hover {
+        text-decoration: none;
+      }
+    }
   }
   
   .accordion-item.active .accordion-content {

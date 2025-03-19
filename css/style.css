@@ -1980,6 +1980,12 @@ form::before {
   line-height: 1.5;
   font-weight: 400;
 }
+.accordion-content a {
+  text-decoration: underline;
+}
+.accordion-content a:hover {
+  text-decoration: none;
+}
 
 .accordion-item.active .accordion-content {
   padding: 0 2rem 2rem;
